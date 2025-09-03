@@ -1,0 +1,83 @@
+# -----------------------
+# OS / Editors
+# -----------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.orig
+.idea/
+.vscode/*
+!.vscode/extensions.json   # keep shared recommended extensions if you add them
+
+# -----------------------
+# Git / Logs
+# -----------------------
+*.log
+logs/
+*.stackdump
+
+# -----------------------
+# Node / Vite (frontend)
+# -----------------------
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Vite/React env files (commit an .env.example instead)
+.env
+.env.*.local
+
+# -----------------------
+# .NET build artifacts
+# -----------------------
+bin/
+obj/
+artifacts/
+*.user
+*.rsuser
+*.suo
+*.userprefs
+
+# VS caches
+.vs/
+
+# -----------------------
+# ASP.NET config (dev secrets)
+# -----------------------
+# Keep appsettings.json (non-secret)
+# Option A (safer): ignore dev-specific files with secrets
+appsettings.Development.json
+appsettings.*.local.json
+
+# If you choose to commit appsettings.Development.json, remove the above lines
+# and ensure secrets come from dotnet user-secrets or env vars.
+
+# -----------------------
+# EF Core
+# -----------------------
+# DO NOT ignore migrations – they must be committed
+# (Intentionally no ignore for **/Migrations/**)
+
+# -----------------------
+# Tooling / Packages
+# -----------------------
+# NuGet
+*.nupkg
+# Bruno/Postman local workspaces (commit collections if you want, ignore local)
+.bruno/*
+!.bruno/collections/**
+
+# -----------------------
+# MySQL dumps & misc
+# -----------------------
+*.sql
+*.sql.gz
+dump*.sql
+
+# -----------------------
+# Docker
+# -----------------------
+# local overrides or generated files
+docker-compose.override.yml
