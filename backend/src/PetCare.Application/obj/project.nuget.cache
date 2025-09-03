@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "YpfaB75KL+k=",
+  "success": true,
+  "projectFilePath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Application/PetCare.Application.csproj",
+  "expectedPackageFiles": [
+    "/Users/kanchan/.nuget/packages/fluentvalidation/12.0.0/fluentvalidation.12.0.0.nupkg.sha512",
+    "/Users/kanchan/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.0.0/fluentvalidation.dependencyinjectionextensions.12.0.0.nupkg.sha512",
+    "/Users/kanchan/.nuget/packages/mapster/7.4.0/mapster.7.4.0.nupkg.sha512",
+    "/Users/kanchan/.nuget/packages/mapster.core/1.2.1/mapster.core.1.2.1.nupkg.sha512",
+    "/Users/kanchan/.nuget/packages/mapster.dependencyinjection/1.0.1/mapster.dependencyinjection.1.0.1.nupkg.sha512",
+    "/Users/kanchan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/6.0.0/microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
