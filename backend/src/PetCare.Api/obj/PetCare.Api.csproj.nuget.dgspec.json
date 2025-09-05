@@ -133,6 +133,9 @@
             "projectReferences": {
               "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj": {
                 "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj"
+              },
+              "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {
+                "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj"
               }
             }
           }
@@ -168,6 +171,14 @@
             "Mapster.DependencyInjection": {
               "target": "Package",
               "version": "[1.0.1, )"
+            },
+            "Microsoft.AspNetCore.Identity": {
+              "target": "Package",
+              "version": "[2.3.1, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.8, )"
             }
           },
           "imports": [

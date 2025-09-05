@@ -9,6 +9,10 @@ using PetCare.Infrastructure.Auth;          // ApplicationUser, RoleSeeder
 using PetCare.Infrastructure.Jwt;           // JwtOptions, JwtTokenGenerator
 using PetCare.Infrastructure.Persistence;   // PetCareDbContext
 
+using FluentValidation;
+using FluentValidation.AspNetCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ---------- DB: MySQL ----------
@@ -93,10 +97,14 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-// ---------- (Hold off until we add files) ----------
-// builder.Services.AddScoped<PetCare.Application.Auth.RegisterOwner.RegisterOwnerCommand>();
-// builder.Services.AddFluentValidationAutoValidation();
-// builder.Services.AddValidatorsFromAssemblyContaining<RegisterOwnerValidator>();
+
+builder.Services.AddScoped<PetCare.Application.Auth.RegisterOwner.RegisterOwnerCommand>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<
+    PetCare.Application.Auth.RegisterOwner.RegisterOwnerValidator
+>();
+
 
 var app = builder.Build();
 
