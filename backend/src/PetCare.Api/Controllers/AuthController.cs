@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using PetCare.Application.Auth.RegisterOwner;
+using PetCare.Application.Auth.Login;
 
 namespace PetCare.Api.Controllers;
 
@@ -39,5 +40,39 @@ public class AuthController : ControllerBase
         }
 
         return Created(string.Empty, new RegisterOwnerResponse());
+    }
+    [AllowAnonymous]
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequest request,
+        [FromServices] LoginQuery handler,
+        CancellationToken ct)
+    {
+        var (ok, error, data) = await handler.ExecuteAsync(request, ct);
+
+        if (!ok)
+        {
+            return error switch
+            {
+                "invalid_credentials" => Unauthorized(new ProblemDetails
+                {
+                    Title = "Invalid credentials",
+                    Detail = "Email or password is incorrect.",
+                    Status = StatusCodes.Status401Unauthorized
+                }),
+                "inactive" => StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails
+                {
+                    Title = "Account inactive",
+                    Detail = "This account is not active. Contact support.",
+                    Status = StatusCodes.Status403Forbidden
+                }),
+                _ => Unauthorized()
+            };
+        }
+
+        return Ok(data);
     }
 }
