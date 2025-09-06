@@ -2,7 +2,6 @@
 function LoginPage() {
     return (
         <section className="bg-white min-h-screen flex flex-col sm:flex-row">
-            {/* Left Side - Image */}
             <div className="hidden sm:flex w-1/2 items-center justify-end pl-4 pr-4">
                 <img
                     src="./Petcare_cover_image.jpg"
@@ -98,7 +97,7 @@ function LoginPage() {
 
                         <p className="text-sm font-light text-gray-500 text-center">
                             Don’t have an account?{" "}
-                            <a href="#" className="font-medium text-blue-600 hover:underline">
+                            <a href="/register" className="font-medium text-blue-600 hover:underline">
                                 Register here
                             </a>
                         </p>
