@@ -73,6 +73,7 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 // Handlers
 builder.Services.AddScoped<PetCare.Application.Users.Profile.UpdateProfileCommand>();
+builder.Services.AddScoped<PetCare.Application.Admin.Users.CreateVet.CreateVetCommand>();
 
 var jwt = builder.Configuration.GetSection("Jwt");
 var issuer  = jwt["Issuer"]  ?? throw new InvalidOperationException("Jwt:Issuer is missing or empty");
@@ -80,10 +81,15 @@ var audience= jwt["Audience"]?? throw new InvalidOperationException("Jwt:Audienc
 var secret  = jwt["Secret"]  ?? throw new InvalidOperationException("Jwt:Secret is missing or empty");
 
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; // dev only; enable in prod
+        options.RequireHttpsMetadata = false; // dev only
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
