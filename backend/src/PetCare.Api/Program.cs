@@ -105,6 +105,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<
     PetCare.Application.Auth.RegisterOwner.RegisterOwnerValidator
 >();
 
+builder.Services.AddScoped<PetCare.Application.Auth.Login.LoginQuery>();
 
 var app = builder.Build();
 
