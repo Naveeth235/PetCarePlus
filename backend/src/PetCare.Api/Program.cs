@@ -71,6 +71,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+// Handlers
+builder.Services.AddScoped<PetCare.Application.Users.Profile.UpdateProfileCommand>();
+
 var jwt = builder.Configuration.GetSection("Jwt");
 var issuer  = jwt["Issuer"]  ?? throw new InvalidOperationException("Jwt:Issuer is missing or empty");
 var audience= jwt["Audience"]?? throw new InvalidOperationException("Jwt:Audience is missing or empty");
