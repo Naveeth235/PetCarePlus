@@ -1,7 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using PetCare.Application.Auth.RegisterOwner;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
 using PetCare.Application.Auth.Login;
+using PetCare.Application.Auth.RegisterOwner;
+using PetCare.Infrastructure.Auth; // ApplicationUser
 
 namespace PetCare.Api.Controllers;
 
@@ -9,6 +13,7 @@ namespace PetCare.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    // --- Owner self-registration ---
     [AllowAnonymous]
     [HttpPost("register-owner")]
     [ProducesResponseType(typeof(RegisterOwnerResponse), StatusCodes.Status201Created)]
@@ -41,6 +46,8 @@ public class AuthController : ControllerBase
 
         return Created(string.Empty, new RegisterOwnerResponse());
     }
+
+    // --- Login ---
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
@@ -73,6 +80,36 @@ public class AuthController : ControllerBase
             };
         }
 
-        return Ok(data);
+        return Ok(data); // expected: { accessToken, expiresAt, ... }
+    }
+
+    // --- Who am I (authoritative roles for FE routing) ---
+    [Authorize]
+    [HttpGet("me")]                 // /api/auth/me
+    [HttpGet("/api/users/me")]      // ALSO available at /api/users/me
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Me(
+        [FromServices] UserManager<ApplicationUser> users,
+        CancellationToken ct)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                   ?? User.FindFirstValue("sub");
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var user = await users.FindByIdAsync(userId);
+        if (user is null)
+            return Unauthorized();
+
+        var roles = await users.GetRolesAsync(user); // ["OWNER","VET","ADMIN"]
+
+        return Ok(new
+        {
+            userId = user.Id,
+            fullName = user.UserName,   // change if you keep a separate FullName
+            email = user.Email,
+            roles
+        });
     }
 }
