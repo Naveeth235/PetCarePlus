@@ -8,6 +8,8 @@ import VetPage from "./features/vet/VetPage.tsx";
 import AdminPage from "./features/admin/AdminPage.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import RequireAdmin from "./features/auth/RequireAdmin";
+import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
 
 const App = () => {
   return (
@@ -27,6 +29,15 @@ const App = () => {
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
+
+        <Route
+          path="/admin/vets/new"
+          element={
+            <RequireAdmin>
+              <AdminAddVetPage />
+            </RequireAdmin>
+          }
+        />
       </Routes>
     </Router>
   );
