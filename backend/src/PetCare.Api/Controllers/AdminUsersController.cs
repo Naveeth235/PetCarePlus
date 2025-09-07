@@ -6,7 +6,7 @@ namespace PetCare.Api.Controllers;
 
 [ApiController]
 [Route("api/admin/users")]
-[Authorize(Roles = "Admin")]   // only Admins can call these
+[Authorize(Roles = "Admin")]
 public class AdminUsersController : ControllerBase
 {
     [HttpPost("vets")]
@@ -18,26 +18,30 @@ public class AdminUsersController : ControllerBase
         [FromServices] CreateVetCommand handler,
         CancellationToken ct)
     {
-        var (ok, errors, data) = await handler.ExecuteAsync(request, ct);
+        var (ok, error, data) = await handler.ExecuteAsync(request, ct);
 
         if (!ok)
         {
-            if (errors.Any(e => e.Contains("already registered", StringComparison.OrdinalIgnoreCase)))
+            return error switch
             {
-                return Conflict(new ProblemDetails
+                "email_in_use" => Conflict(new ProblemDetails
                 {
                     Title = "Email already in use",
-                    Detail = errors.First(),
+                    Detail = "An account with this email already exists.",
                     Status = StatusCodes.Status409Conflict
-                });
-            }
-
-            return BadRequest(new ProblemDetails
-            {
-                Title = "Vet creation failed",
-                Detail = string.Join("; ", errors),
-                Status = StatusCodes.Status400BadRequest
-            });
+                }),
+                "validation_failed" => BadRequest(new ProblemDetails
+                {
+                    Title = "Validation failed",
+                    Detail = "Missing or invalid fields.",
+                    Status = StatusCodes.Status400BadRequest
+                }),
+                _ when error?.StartsWith("identity_error") == true
+                    => BadRequest(new ProblemDetails { Title = "Identity error", Detail = error, Status = 400 }),
+                _ when error?.StartsWith("role_error") == true
+                    => BadRequest(new ProblemDetails { Title = "Role assignment failed", Detail = error, Status = 400 }),
+                _ => BadRequest(new ProblemDetails { Title = "Create vet failed", Detail = error ?? "Unknown error", Status = 400 })
+            };
         }
 
         return Created(string.Empty, data);
