@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Security.Claims;  // <— needed for ClaimTypes
 
 using PetCare.Infrastructure.Auth;          // ApplicationUser, RoleSeeder
 using PetCare.Infrastructure.Jwt;           // JwtOptions, JwtTokenGenerator
@@ -88,21 +89,26 @@ builder.Services
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.RequireHttpsMetadata = false; // dev only
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = issuer,
-            ValidateAudience = true,
-            ValidAudience = audience,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(2)
-        };
-    });
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidateAudience = true,
+        ValidAudience = audience,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(2),
+
+        // make role checks work
+        RoleClaimType = ClaimTypes.Role,
+        NameClaimType = ClaimTypes.NameIdentifier
+    };
+});
+
 
 builder.Services.AddAuthorization();
 
