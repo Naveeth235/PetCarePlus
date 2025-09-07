@@ -95,6 +95,11 @@ function LoginPage() {
 
       // store token
       setToken(res.data.accessToken);
+      localStorage.setItem(
+        "APP_ROLE",
+        (res.data.user?.role ?? "").toUpperCase()
+      );
+
       if (remember) {
         // (optional) persist a refresh token later
       }
