@@ -105,6 +105,27 @@ public class AdminUsersController : ControllerBase
 
         return Ok(result);
     }
+    // GET /api/admin/users/vets/{id}
+[HttpGet("vets/{id}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+public async Task<IActionResult> GetVetById(
+    [FromServices] PetCareDbContext db,
+    [FromRoute] string id,
+    CancellationToken ct = default)
+{
+    var vet =
+        await (from u in db.Users
+               join ur in db.UserRoles on u.Id equals ur.UserId
+               join r in db.Roles on ur.RoleId equals r.Id
+               where r.NormalizedName == "VET" && u.Id == id
+               select new { u.Id, u.FullName, u.Email })
+              .FirstOrDefaultAsync(ct);
+
+    if (vet is null) return NotFound();
+    return Ok(new { id = vet.Id, fullName = vet.FullName, email = vet.Email });
+}
+
 
     // Local DTOs (keep it here for now; can move to Application later)
     private sealed class VetListItem

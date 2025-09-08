@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./features/auth/LoginPage.tsx";
 import RegistrationPage from "./features/auth/RegistrationPage.tsx";
 
-// NEW imports
 import OwnerPage from "./features/owner/OwnerPage.tsx";
 import VetPage from "./features/vet/VetPage.tsx";
 import AdminPage from "./features/admin/AdminPage.tsx";
@@ -11,6 +10,7 @@ import NotFound from "./pages/NotFound.tsx";
 import RequireAdmin from "./features/auth/RequireAdmin";
 import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
 import AdminVetListPage from "./features/admin/AdminVetListPage.tsx";
+import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
 
 const App = () => {
   return (
@@ -45,6 +45,14 @@ const App = () => {
           element={
             <RequireAdmin>
               <AdminVetListPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/vets/:id"
+          element={
+            <RequireAdmin>
+              <AdminVetDetailsPage />
             </RequireAdmin>
           }
         />

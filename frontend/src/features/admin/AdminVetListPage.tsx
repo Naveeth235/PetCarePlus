@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "./AdminLayout";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { fetchVets, type VetItem } from "./vetsApi";
+import { Link } from "react-router-dom";
 
 export default function AdminVetListPage() {
   const [items, setItems] = useState<VetItem[]>([]);
@@ -172,8 +173,15 @@ export default function AdminVetListPage() {
             </thead>
             <tbody>
               {items.map((v) => (
-                <tr key={v.id} className="border-t">
-                  <td className="px-6 py-3">{v.fullName || "—"}</td>
+                <tr key={v.id} className="border-t hover:bg-gray-50">
+                  <td className="px-6 py-3">
+                    <Link
+                      to={`/admin/vets/${v.id}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {v.fullName || "—"}
+                    </Link>
+                  </td>
                   <td className="px-6 py-3">{v.email || "—"}</td>
                 </tr>
               ))}
