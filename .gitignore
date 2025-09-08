@@ -81,3 +81,8 @@ dump*.sql
 # -----------------------
 # local overrides or generated files
 docker-compose.override.yml
+
+# Build output
+bin/
+obj/
+
