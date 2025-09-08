@@ -10,6 +10,7 @@ import Unauthorized from "./pages/Unauthorized.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RequireAdmin from "./features/auth/RequireAdmin";
 import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
+import AdminVetListPage from "./features/admin/AdminVetListPage.tsx";
 
 const App = () => {
   return (
@@ -35,6 +36,15 @@ const App = () => {
           element={
             <RequireAdmin>
               <AdminAddVetPage />
+            </RequireAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/vets"
+          element={
+            <RequireAdmin>
+              <AdminVetListPage />
             </RequireAdmin>
           }
         />
