@@ -4,10 +4,12 @@ import RegistrationPage from "./features/auth/RegistrationPage.tsx";
 
 import OwnerPage from "./features/owner/OwnerPage.tsx";
 import VetPage from "./features/vet/VetPage.tsx";
-import AdminPage from "./features/admin/AdminPage.tsx";
+import AdminDashboard from "./features/admin/AdminDashboard.tsx"; // updated import
 import Unauthorized from "./pages/Unauthorized.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RequireAdmin from "./features/auth/RequireAdmin";
+import RequireAuth from "./features/auth/RequireAuth";
+import RequireRole from "./features/auth/RequireRole";
 import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
 import AdminVetListPage from "./features/admin/AdminVetListPage.tsx";
 import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
@@ -16,21 +18,41 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* public */}
+        {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
 
-        {/* placeholders for role areas (public for now) */}
-        <Route path="/owner" element={<OwnerPage />} />
-        <Route path="/vet" element={<VetPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        {/* Protected role-based routes */}
+        <Route
+          path="/owner"
+          element={
+            <RequireAuth>
+              <RequireRole roles={["OWNER", "ADMIN", "VET"]}>
+                <OwnerPage />
+              </RequireRole>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/vet"
+          element={
+            <RequireAuth>
+              <RequireRole roles={["VET", "ADMIN"]}>
+                <VetPage />
+              </RequireRole>
+            </RequireAuth>
+          }
+        />
 
-        {/* misc */}
-        <Route path="/unauthorized" element={<Unauthorized />} />
-
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
-
+        {/* Admin routes */}
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <AdminDashboard />
+            </RequireAdmin>
+          }
+        />
         <Route
           path="/admin/vets/new"
           element={
@@ -39,7 +61,6 @@ const App = () => {
             </RequireAdmin>
           }
         />
-
         <Route
           path="/admin/vets"
           element={
@@ -56,6 +77,12 @@ const App = () => {
             </RequireAdmin>
           }
         />
+
+        {/* Misc */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
