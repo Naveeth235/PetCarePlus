@@ -151,3 +151,65 @@ export async function updateUser(
     return { ok: false, code: "network" };
   }
 }
+
+// --- ME helpers (can live in usersApi.ts or a new meApi.ts) ---
+type MeInfo = {
+  userId: string;
+  fullName?: string;
+  email?: string;
+  roles?: string[];
+};
+
+export async function getMe(): Promise<MeInfo> {
+  if (!BASE) throw new Error("no-base");
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (!token) throw new Error("no-token");
+
+  const res = await fetch(`${BASE}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(`me-${res.status}`);
+  return res.json();
+}
+
+export type UpdateMeOk = {
+  ok: true;
+  data: { id: string; fullName?: string; email?: string; roles: string[] };
+};
+export type UpdateMeErr = {
+  ok: false;
+  code: "unauthorized" | "conflict" | "failed" | "network";
+  status?: number;
+  message?: string;
+};
+
+export async function updateMe(body: {
+  fullName?: string;
+  email?: string;
+}): Promise<UpdateMeOk | UpdateMeErr> {
+  if (!BASE) return { ok: false, code: "failed", message: "No API base URL" };
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (!token) return { ok: false, code: "unauthorized" };
+
+  try {
+    const res = await fetch(`${BASE}/api/users/me`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status === 401)
+      return { ok: false, code: "unauthorized", status: 401 };
+    if (res.status === 409) return { ok: false, code: "conflict", status: 409 };
+    if (!res.ok) return { ok: false, code: "failed", status: res.status };
+
+    const data = await res.json();
+    return { ok: true, data };
+  } catch (e) {
+    console.error("updateMe error", e);
+    return { ok: false, code: "network" };
+  }
+}
