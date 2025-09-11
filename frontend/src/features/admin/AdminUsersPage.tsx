@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { fetchAdminUsers } from "./usersApi";
 import type { UserListItem } from "./usersApi";
+// Optional: use Link instead of <a>
+// import { Link } from "react-router-dom";
 
 function AdminUsersPage() {
   const [users, setUsers] = useState<UserListItem[]>([]);
@@ -60,6 +62,9 @@ function AdminUsersPage() {
               <th className="border border-gray-300 px-2 py-1 text-left">
                 Status
               </th>
+              <th className="border border-gray-300 px-2 py-1 text-left">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -76,6 +81,16 @@ function AdminUsersPage() {
                 </td>
                 <td className="border border-gray-300 px-2 py-1">
                   {u.isActive ? "Active" : "Inactive"}
+                </td>
+                <td className="border border-gray-300 px-2 py-1">
+                  {/* Prefer Link to avoid full reload */}
+                  {/* <Link className="text-blue-600 underline" to={`/admin/users/${u.id}`}>Edit</Link> */}
+                  <a
+                    className="text-blue-600 underline"
+                    href={`/admin/users/${u.id}`}
+                  >
+                    Edit
+                  </a>
                 </td>
               </tr>
             ))}

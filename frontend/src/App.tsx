@@ -14,6 +14,7 @@ import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
 import AdminVetListPage from "./features/admin/AdminVetListPage.tsx";
 import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
+import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 
 const App = () => {
   return (
@@ -82,6 +83,7 @@ const App = () => {
         {/* Misc */}
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/users/:id" element={<AdminUserEditPage />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
