@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCare.Application.Admin.Users.CreateVet;
-using PetCare.Infrastructure.Persistence; 
+using PetCare.Infrastructure.Persistence;
+using PetCare.Domain.Users; // AccountStatus
+
+
 
 namespace PetCare.Api.Controllers;
 
@@ -124,6 +127,86 @@ public async Task<IActionResult> GetVetById(
 
     if (vet is null) return NotFound();
     return Ok(new { id = vet.Id, fullName = vet.FullName, email = vet.Email });
+}
+
+// GET /api/admin/users?role=Admin|Vet|Owner&search=...&page=1&pageSize=10
+[HttpGet]
+[ProducesResponseType(StatusCodes.Status200OK)]
+public async Task<IActionResult> ListUsers(
+    [FromServices] PetCareDbContext db,
+    [FromQuery] string? role,
+    [FromQuery] string? search,
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 10,
+    CancellationToken ct = default)
+{
+    page = Math.Max(1, page);
+    pageSize = pageSize is <= 0 or > 100 ? 10 : pageSize;
+    var q = db.Users.AsQueryable();
+
+    // role filter (Admin/Vet/Owner)
+    if (!string.IsNullOrWhiteSpace(role))
+    {
+        var normalized = role.Trim().ToUpperInvariant(); // "ADMIN"|"VET"|"OWNER"
+        q =
+            from u in q
+            join ur in db.UserRoles on u.Id equals ur.UserId
+            join r in db.Roles on ur.RoleId equals r.Id
+            where r.NormalizedName == normalized
+            select u;
+    }
+
+    // search by name or email (case-insensitive)
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var s = search.Trim();
+        q = q.Where(u =>
+            (u.FullName != null && EF.Functions.Like(u.FullName, $"%{s}%")) ||
+            (u.Email != null && EF.Functions.Like(u.Email, $"%{s}%")));
+    }
+
+    var total = await q.CountAsync(ct);
+
+    // page the base user slice
+    var pageItems = await q
+        .OrderBy(u => u.FullName).ThenBy(u => u.Email)
+        .Select(u => new { u.Id, u.FullName, u.Email, u.AccountStatus })
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync(ct);
+
+    var userIds = pageItems.Select(x => x.Id).ToList();
+
+    // fetch roles for this slice
+    var rolesMap = await (
+        from ur in db.UserRoles
+        join r in db.Roles on ur.RoleId equals r.Id
+        where userIds.Contains(ur.UserId)
+        select new { ur.UserId, r.Name }
+    ).ToListAsync(ct);
+
+    var rolesByUser = rolesMap
+        .GroupBy(x => x.UserId)
+        .ToDictionary(g => g.Key, g => g.Select(x => x.Name).OrderBy(n => n).ToArray());
+
+var items = pageItems.Select(x => new
+{
+    id = x.Id,
+    fullName = x.FullName,
+    email = x.Email,
+    accountStatus = x.AccountStatus.ToString(),
+    isActive = x.AccountStatus == AccountStatus.Active,
+    roles = rolesByUser.TryGetValue(x.Id, out var rr) ? rr : Array.Empty<string>()
+});
+
+
+    return Ok(new
+    {
+        items,
+        total,
+        page,
+        pageSize
+    });
 }
 
 
