@@ -13,6 +13,7 @@ import RequireRole from "./features/auth/RequireRole";
 import AdminAddVetPage from "./features/admin/AdminAddVetPage.tsx";
 import AdminVetListPage from "./features/admin/AdminVetListPage.tsx";
 import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
+import AdminUsersPage from "./features/admin/AdminUsersPage";
 
 const App = () => {
   return (
@@ -80,6 +81,7 @@ const App = () => {
 
         {/* Misc */}
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/admin/users" element={<AdminUsersPage />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
