@@ -172,6 +172,10 @@ export async function getMe(): Promise<MeInfo> {
   return res.json();
 }
 
+export async function setUserActive(id: string, active: boolean) {
+  return updateUser(id, { accountStatus: active ? "Active" : "Inactive" });
+}
+
 export type UpdateMeOk = {
   ok: true;
   data: { id: string; fullName?: string; email?: string; roles: string[] };
