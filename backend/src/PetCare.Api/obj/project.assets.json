@@ -5519,19 +5519,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/kanchan/.nuget/packages/": {}
+    "/Users/dinethminmu/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Api/PetCare.Api.csproj",
+      "projectUniqueName": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Api/PetCare.Api.csproj",
       "projectName": "PetCare.Api",
-      "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Api/PetCare.Api.csproj",
-      "packagesPath": "/Users/kanchan/.nuget/packages/",
-      "outputPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Api/obj/",
+      "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Api/PetCare.Api.csproj",
+      "packagesPath": "/Users/dinethminmu/.nuget/packages/",
+      "outputPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/kanchan/.nuget/NuGet/NuGet.Config"
+        "/Users/dinethminmu/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -5543,11 +5543,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Application/PetCare.Application.csproj": {
-              "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Application/PetCare.Application.csproj"
+            "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Application/PetCare.Application.csproj": {
+              "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Application/PetCare.Application.csproj"
             },
-            "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {
-              "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj"
+            "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {
+              "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj"
             }
           }
         }

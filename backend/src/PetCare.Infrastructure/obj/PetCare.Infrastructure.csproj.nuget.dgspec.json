@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {}
+    "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {}
   },
   "projects": {
-    "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj": {
+    "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj",
+        "projectUniqueName": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj",
         "projectName": "PetCare.Domain",
-        "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj",
-        "packagesPath": "/Users/kanchan/.nuget/packages/",
-        "outputPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/obj/",
+        "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj",
+        "packagesPath": "/Users/dinethminmu/.nuget/packages/",
+        "outputPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/kanchan/.nuget/NuGet/NuGet.Config"
+          "/Users/dinethminmu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -63,17 +63,17 @@
         }
       }
     },
-    "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {
+    "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj",
+        "projectUniqueName": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj",
         "projectName": "PetCare.Infrastructure",
-        "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj",
-        "packagesPath": "/Users/kanchan/.nuget/packages/",
-        "outputPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Infrastructure/obj/",
+        "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj",
+        "packagesPath": "/Users/dinethminmu/.nuget/packages/",
+        "outputPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/kanchan/.nuget/NuGet/NuGet.Config"
+          "/Users/dinethminmu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -85,8 +85,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj": {
-                "projectPath": "/Users/kanchan/Desktop/Y3S1/CSP/project/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj"
+              "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj": {
+                "projectPath": "/Users/dinethminmu/Desktop/Group_Project_CSP_Y3S1/PetCarePlus/backend/src/PetCare.Domain/PetCare.Domain.csproj"
               }
             }
           }
