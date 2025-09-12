@@ -19,8 +19,6 @@ function AdminUserEditPage() {
   const [error, setError] = useState<string | null>(null);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
 
-  // naive fetch: reuse list API to find the user in the first page(s) for now
-  // (Later we can add GET /api/admin/users/{id} for direct fetch)
   useEffect(() => {
     let active = true;
     const run = async () => {
@@ -28,7 +26,6 @@ function AdminUserEditPage() {
       setLoading(true);
       setError(null);
 
-      // Try a couple pages to find the user quickly (small dataset in Sprint 1)
       let found: UserListItem | undefined;
       for (let p = 1; p <= 3 && !found; p++) {
         const res = await fetchAdminUsers({ page: p, pageSize: 20 });
@@ -94,7 +91,6 @@ function AdminUserEditPage() {
       return;
     }
 
-    // Update local state from server response
     setUser({
       id: res.user.id,
       fullName: res.user.fullName,
@@ -105,33 +101,45 @@ function AdminUserEditPage() {
     });
     setSaveMsg("Saved!");
     setSaving(false);
-
-    // Optional: go back to list after a short delay
-    // setTimeout(() => navigate("/admin/users"), 600);
   };
 
-  if (loading) return <section className="p-6">Loading...</section>;
-  if (error) return <section className="p-6 text-red-600">{error}</section>;
-  if (!user) return <section className="p-6">No user.</section>;
+  if (loading)
+    return (
+      <section className="p-6 text-gray-600 text-lg font-medium">
+        Loading...
+      </section>
+    );
+  if (error)
+    return (
+      <section className="p-6 text-red-600 text-lg font-medium">{error}</section>
+    );
+  if (!user) return <section className="p-6 text-gray-500">No user.</section>;
 
   return (
-    <section className="p-6 max-w-2xl">
+    <section className="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
       <button
-        className="mb-4 text-blue-600 underline"
+        className="mb-6 text-blue-600 hover:text-blue-800 font-medium transition"
         onClick={() => navigate(-1)}
       >
         ← Back
       </button>
-      <h1 className="text-2xl font-bold mb-4">Edit User</h1>
 
-      <form className="space-y-4" onSubmit={onSubmit}>
-        {saveMsg && <div className="text-green-600">{saveMsg}</div>}
-        {error && <div className="text-red-600">{error}</div>}
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Edit User</h1>
+
+      <form className="space-y-6" onSubmit={onSubmit}>
+        {saveMsg && (
+          <div className="p-3 bg-green-100 text-green-800 rounded">{saveMsg}</div>
+        )}
+        {error && (
+          <div className="p-3 bg-red-100 text-red-800 rounded">{error}</div>
+        )}
 
         <div>
-          <label className="block text-sm font-medium mb-1">Full name</label>
+          <label className="block text-sm font-medium mb-2 text-gray-700">
+            Full Name
+          </label>
           <input
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Full name"
@@ -139,22 +147,23 @@ function AdminUserEditPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
+          <label className="block text-sm font-medium mb-2 text-gray-700">
+            Email
+          </label>
           <input
             type="email"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="user@example.com"
+            readOnly
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Account status
+          <label className="block text-sm font-medium mb-2 text-gray-700">
+            Account Status
           </label>
           <select
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={accountStatus}
             onChange={(e) =>
               setAccountStatus(e.target.value as "Active" | "Inactive")
@@ -170,9 +179,9 @@ function AdminUserEditPage() {
 
         <button
           disabled={saving}
-          className="bg-blue-600 text-white rounded px-4 py-2 disabled:opacity-60"
+          className="w-full bg-blue-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-blue-700 transition disabled:opacity-60"
         >
-          {saving ? "Saving..." : "Save changes"}
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </section>
