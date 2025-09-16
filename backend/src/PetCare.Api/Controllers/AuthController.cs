@@ -83,7 +83,7 @@ public class AuthController : ControllerBase
         return Ok(data); // expected: { accessToken, expiresAt, ... }
     }
 
-    // --- Who am I (authoritative roles for FE routing) ---
+    
     [Authorize]
     [HttpGet("me")]                 // /api/auth/me
     [HttpGet("/api/users/me")]      // ALSO available at /api/users/me

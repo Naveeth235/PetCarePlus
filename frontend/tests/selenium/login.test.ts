@@ -17,7 +17,7 @@ async function register(driver: WebDriver) {
     const emailInput = await driver.wait(until.elementLocated(By.css("#email")), 10000);
     await driver.executeScript("arguments[0].scrollIntoView(true);", emailInput);
     await highlight(driver, emailInput);
-    await emailInput.sendKeys("dm11@gmail.com");
+    await emailInput.sendKeys("dm13@gmail.com");
 
     const passwordInput = await driver.wait(until.elementLocated(By.css("#password")), 10000);
     await driver.executeScript("arguments[0].scrollIntoView(true);", passwordInput);
@@ -64,7 +64,7 @@ async function login(driver: WebDriver) {
     const emailInput = await driver.wait(until.elementLocated(By.css("#email")), 10000);
     await driver.executeScript("arguments[0].scrollIntoView(true);", emailInput);
     await highlight(driver, emailInput);
-    await emailInput.sendKeys("dm11@gmail.com");
+    await emailInput.sendKeys("dm13@gmail.com");
 
     const passwordInput = await driver.wait(until.elementLocated(By.css("#password")), 10000);
     await driver.executeScript("arguments[0].scrollIntoView(true);", passwordInput);
