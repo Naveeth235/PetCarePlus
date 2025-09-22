@@ -16,6 +16,8 @@ import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
 import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
+import { AdminPetsPage } from "./features/admin/pages";
+import { OwnerPetsPage } from "./features/owner/pages";
 
 const App = () => {
   return (
@@ -57,6 +59,14 @@ const App = () => {
           }
         />
         <Route
+          path="/admin/pets"
+          element={
+            <RequireAdmin>
+              <AdminPetsPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
           path="/admin/vets/new"
           element={
             <RequireAdmin>
@@ -78,6 +88,18 @@ const App = () => {
             <RequireAdmin>
               <AdminVetDetailsPage />
             </RequireAdmin>
+          }
+        />
+
+        {/* Owner routes */}
+        <Route
+          path="/owner/pets"
+          element={
+            <RequireAuth>
+              <RequireRole roles={["OWNER", "ADMIN"]}>
+                <OwnerPetsPage />
+              </RequireRole>
+            </RequireAuth>
           }
         />
 
