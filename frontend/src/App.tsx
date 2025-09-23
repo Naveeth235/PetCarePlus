@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage.tsx";
 import LoginPage from "./features/auth/LoginPage.tsx";
 import RegistrationPage from "./features/auth/RegistrationPage.tsx";
 
@@ -23,6 +24,9 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Landing page */}
+        <Route path="/" element={<LandingPage />} />
+        
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
