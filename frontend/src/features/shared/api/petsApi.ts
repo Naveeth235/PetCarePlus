@@ -7,6 +7,7 @@ const API_BASE = `${API_BASE_URL}/api/pets`;
 // Get auth token from localStorage
 const getAuthHeaders = () => {
   const token = getToken();
+  console.log('Auth token:', token ? 'Present' : 'Missing'); // Debug log
   return {
     'Content-Type': 'application/json',
     ...(token && { 'Authorization': `Bearer ${token}` })
@@ -15,8 +16,11 @@ const getAuthHeaders = () => {
 
 // Generic API response handler
 const handleResponse = async <T>(response: Response): Promise<T> => {
+  console.log('API Response:', response.status, response.statusText); // Debug log
+  
   if (!response.ok) {
     const errorData = await response.text();
+    console.error('API Error:', response.status, errorData); // Debug log
     throw new Error(`HTTP ${response.status}: ${errorData}`);
   }
   
@@ -108,6 +112,14 @@ export const petsApi = {
       headers: getAuthHeaders()
     });
     return handleResponse<Pet[]>(response);
+  },
+
+  // Debug endpoint to check user claims
+  debugMe: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE}/debug/me`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<any>(response);
   },
 
   // Get pets by owner ID

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using PetCare.Application.Pets.Commands.AssignPetToOwner;
 using PetCare.Application.Pets.Commands.CreatePet;
 using PetCare.Application.Pets.Commands.DeletePet;
@@ -51,7 +52,7 @@ public class PetsController : ControllerBase
         }
 
         // Users can only access their own pets, Admins can access any pet
-        if (!User.IsInRole("Admin") && result.OwnerUserId != User.FindFirst("sub")?.Value)
+        if (!User.IsInRole("Admin") && result.OwnerUserId != (User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value))
         {
             return Forbid("You can only access your own pets");
         }
@@ -66,7 +67,7 @@ public class PetsController : ControllerBase
     public async Task<ActionResult<IReadOnlyList<PetDto>>> GetPetsByOwner(string ownerId)
     {
         // Users can only access their own pets, Admins can access any owner's pets
-        if (!User.IsInRole("Admin") && ownerId != User.FindFirst("sub")?.Value)
+        if (!User.IsInRole("Admin") && ownerId != (User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value))
         {
             return Forbid("You can only access your own pets");
         }
@@ -189,7 +190,8 @@ public class PetsController : ControllerBase
     [HttpGet("my-pets")]
     public async Task<ActionResult<IReadOnlyList<PetDto>>> GetMyPets()
     {
-        var userId = User.FindFirst("sub")?.Value;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                   ?? User.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("User ID not found in token");
@@ -198,5 +200,26 @@ public class PetsController : ControllerBase
         var query = new GetPetsByOwnerQuery(userId);
         var result = await _mediator.Send(query);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Debug endpoint to check current user claims
+    /// </summary>
+    [HttpGet("debug/me")]
+    public ActionResult GetCurrentUserInfo()
+    {
+        var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                   ?? User.FindFirst("sub")?.Value;
+        var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+        
+        return Ok(new
+        {
+            UserId = userId,
+            Roles = roles,
+            AllClaims = claims,
+            IsAuthenticated = User.Identity?.IsAuthenticated ?? false,
+            AuthenticationType = User.Identity?.AuthenticationType
+        });
     }
 }
