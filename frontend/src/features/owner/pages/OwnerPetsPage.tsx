@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PetCard } from '../../shared/components';
 import { petsApi } from '../../shared/api/petsApi';
 import type { Pet } from '../../shared/types/pet';
+import { debugToken } from '../../../utils/tokenDebug';
 
 interface PetDetailsModalProps {
   isOpen: boolean;
@@ -122,12 +123,31 @@ export const OwnerPetsPage: React.FC = () => {
 
   useEffect(() => {
     loadMyPets();
+    // Debug token information
+    debugToken();
   }, []);
 
   const loadMyPets = async () => {
     try {
       setIsLoading(true);
       setError(null);
+      
+      // Debug: Check if token exists
+      const token = localStorage.getItem('APP_AT');
+      console.log('Token check - Token exists:', !!token);
+      if (token) {
+        console.log('Token preview:', token.substring(0, 50) + '...');
+      }
+      
+      // Debug: Test backend claims
+      try {
+        console.log('Testing backend claims...');
+        const debugInfo = await petsApi.debugMe();
+        console.log('Backend debug info:', debugInfo);
+      } catch (debugError) {
+        console.error('Backend debug failed:', debugError);
+      }
+      
       const data = await petsApi.getMy();
       setPets(data);
     } catch (error) {
