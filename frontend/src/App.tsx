@@ -1,5 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage.tsx";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./features/auth/LoginPage.tsx";
 import RegistrationPage from "./features/auth/RegistrationPage.tsx";
 
@@ -19,13 +18,15 @@ import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
 import { AdminPetsPage } from "./features/admin/pages";
 import { OwnerPetsPage } from "./features/owner/pages";
+import VetMedicalRecords from "./features/vet/VetMedicalRecords";
+import PetMedicalRecordsWrapper from "./features/owner/PetMedicalRecordsWrapper";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Landing page */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Root route redirects to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
         
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -52,6 +53,17 @@ const App = () => {
             </RequireAuth>
           }
         />
+        <Route
+          path="/vet/medical-records"
+          element={
+            <RequireAuth>
+              {/* Both VET and ADMIN roles can access medical records management */}
+              <RequireRole roles={["VET", "ADMIN"]}>
+                <VetMedicalRecords />
+              </RequireRole>
+            </RequireAuth>
+          }
+        />
 
         {/* Admin routes */}
         <Route
@@ -67,6 +79,14 @@ const App = () => {
           element={
             <RequireAdmin>
               <AdminPetsPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/medical-records"
+          element={
+            <RequireAdmin>
+              <VetMedicalRecords />
             </RequireAdmin>
           }
         />
@@ -102,6 +122,26 @@ const App = () => {
             <RequireAuth>
               <RequireRole roles={["OWNER", "ADMIN"]}>
                 <OwnerPetsPage />
+              </RequireRole>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/owner/medical-records"
+          element={
+            <RequireAuth>
+              <RequireRole roles={["OWNER", "ADMIN"]}>
+                <OwnerPetsPage />
+              </RequireRole>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/owner/pets/:petId/medical-records"
+          element={
+            <RequireAuth>
+              <RequireRole roles={["OWNER", "ADMIN", "VET"]}>
+                <PetMedicalRecordsWrapper />
               </RequireRole>
             </RequireAuth>
           }
