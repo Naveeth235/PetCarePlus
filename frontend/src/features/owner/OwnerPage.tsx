@@ -10,7 +10,11 @@ const OwnerPage = () => {
             My Pets
           </Link>
         </li>
-        <li>Medical History (read-only)</li>
+        <li>
+          <Link className="text-blue-600 underline" to="/owner/medical-records">
+            Pet Medical Records
+          </Link>
+        </li>
         <li>Request Appointment</li>
         <li>My Appointments</li>
       </ul>

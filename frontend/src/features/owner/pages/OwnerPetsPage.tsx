@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { PetCard } from '../../shared/components';
 import { petsApi } from '../../shared/api/petsApi';
 import type { Pet } from '../../shared/types/pet';
@@ -102,10 +103,16 @@ const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet 
           <div className="flex justify-end mt-6">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-3"
             >
               Close
             </button>
+            <Link
+              to={`/owner/pets/${pet.id}/medical-records`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-block text-center"
+            >
+              View Medical Records
+            </Link>
           </div>
         </div>
       </div>
