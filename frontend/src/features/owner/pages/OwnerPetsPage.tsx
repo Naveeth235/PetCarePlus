@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { PetCard } from '../../shared/components';
-import { petsApi } from '../../shared/api/petsApi';
-import type { Pet } from '../../shared/types/pet';
-import { debugToken } from '../../../utils/tokenDebug';
+import React, { useState, useEffect } from "react";
+import { PetCard } from "../../shared/components";
+import { petsApi } from "../../shared/api/petsApi";
+import type { Pet } from "../../shared/types/pet";
+import { debugToken } from "../../../utils/tokenDebug";
 
 interface PetDetailsModalProps {
   isOpen: boolean;
@@ -10,34 +10,49 @@ interface PetDetailsModalProps {
   pet: Pet;
 }
 
-const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet }) => {
+const PetDetailsModal: React.FC<PetDetailsModalProps> = ({
+  isOpen,
+  onClose,
+  pet,
+}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white ring-1 ring-slate-200 shadow-xl">
         <div className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-2xl font-semibold">{pet.name}</h2>
+          <div className="mb-4 flex items-start justify-between">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-800">
+              {pet.name}
+            </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:ring focus-visible:ring-indigo-500"
+              aria-label="Close modal"
             >
               ×
             </button>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Basic Info */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Species</label>
-                <p className="text-gray-900">{pet.species}</p>
+                <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                  Species
+                </label>
+                <p className="text-slate-800">{pet.species}</p>
               </div>
               {pet.breed && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Breed</label>
-                  <p className="text-gray-900">{pet.breed}</p>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Breed
+                  </label>
+                  <p className="text-slate-800">{pet.breed}</p>
                 </div>
               )}
             </div>
@@ -45,14 +60,20 @@ const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet 
             <div className="grid grid-cols-2 gap-4">
               {pet.dateOfBirth && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                  <p className="text-gray-900">{new Date(pet.dateOfBirth).toLocaleDateString()}</p>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Date of Birth
+                  </label>
+                  <p className="text-slate-800">
+                    {new Date(pet.dateOfBirth).toLocaleDateString()}
+                  </p>
                 </div>
               )}
               {pet.ageInYears !== undefined && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Age</label>
-                  <p className="text-gray-900">{pet.ageInYears} years old</p>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Age
+                  </label>
+                  <p className="text-slate-800">{pet.ageInYears} years old</p>
                 </div>
               )}
             </div>
@@ -60,14 +81,18 @@ const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet 
             <div className="grid grid-cols-2 gap-4">
               {pet.color && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Color</label>
-                  <p className="text-gray-900">{pet.color}</p>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Color
+                  </label>
+                  <p className="text-slate-800">{pet.color}</p>
                 </div>
               )}
               {pet.weight && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Weight</label>
-                  <p className="text-gray-900">{pet.weight} kg</p>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Weight
+                  </label>
+                  <p className="text-slate-800">{pet.weight} kg</p>
                 </div>
               )}
             </div>
@@ -75,23 +100,31 @@ const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet 
             {/* Medical Notes */}
             {pet.medicalNotes && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Medical Notes</label>
-                <div className="bg-gray-50 rounded-md p-3">
-                  <p className="text-gray-900 whitespace-pre-wrap">{pet.medicalNotes}</p>
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                  Medical Notes
+                </label>
+                <div className="rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+                  <p className="whitespace-pre-wrap text-slate-800">
+                    {pet.medicalNotes}
+                  </p>
                 </div>
               </div>
             )}
 
             {/* Timestamps */}
-            <div className="border-t pt-4">
-              <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+            <div className="pt-4">
+              <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
                 <div>
-                  <label className="block font-medium">Created</label>
+                  <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Created
+                  </label>
                   <p>{new Date(pet.createdAt).toLocaleDateString()}</p>
                 </div>
                 {pet.updatedAt && (
                   <div>
-                    <label className="block font-medium">Last Updated</label>
+                    <label className="block text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Last Updated
+                    </label>
                     <p>{new Date(pet.updatedAt).toLocaleDateString()}</p>
                   </div>
                 )}
@@ -99,10 +132,10 @@ const PetDetailsModal: React.FC<PetDetailsModalProps> = ({ isOpen, onClose, pet 
             </div>
           </div>
 
-          <div className="flex justify-end mt-6">
+          <div className="mt-6 flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-white focus-visible:ring focus-visible:ring-indigo-500"
             >
               Close
             </button>
@@ -117,13 +150,12 @@ export const OwnerPetsPage: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     loadMyPets();
-    // Debug token information
     debugToken();
   }, []);
 
@@ -131,28 +163,24 @@ export const OwnerPetsPage: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // Debug: Check if token exists
-      const token = localStorage.getItem('APP_AT');
-      console.log('Token check - Token exists:', !!token);
-      if (token) {
-        console.log('Token preview:', token.substring(0, 50) + '...');
-      }
-      
-      // Debug: Test backend claims
+
+      const token = localStorage.getItem("APP_AT");
+      console.log("Token check - Token exists:", !!token);
+      if (token) console.log("Token preview:", token.substring(0, 50) + "...");
+
       try {
-        console.log('Testing backend claims...');
+        console.log("Testing backend claims...");
         const debugInfo = await petsApi.debugMe();
-        console.log('Backend debug info:', debugInfo);
+        console.log("Backend debug info:", debugInfo);
       } catch (debugError) {
-        console.error('Backend debug failed:', debugError);
+        console.error("Backend debug failed:", debugError);
       }
-      
+
       const data = await petsApi.getMy();
       setPets(data);
     } catch (error) {
-      console.error('Failed to load pets:', error);
-      setError('Failed to load your pets. Please try again.');
+      console.error("Failed to load pets:", error);
+      setError("Failed to load your pets. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -163,18 +191,19 @@ export const OwnerPetsPage: React.FC = () => {
     setIsDetailsModalOpen(true);
   };
 
-  const filteredPets = pets.filter(pet =>
-    pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    pet.breed?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPets = pets.filter(
+    (pet) =>
+      pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pet.breed?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const activePets = filteredPets.filter(pet => pet.isActive);
-  const inactivePets = filteredPets.filter(pet => !pet.isActive);
+  const activePets = filteredPets.filter((pet) => pet.isActive);
+  const inactivePets = filteredPets.filter((pet) => !pet.isActive);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-600">Loading your pets...</div>
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-lg text-slate-600">Loading your pets...</div>
       </div>
     );
   }
@@ -183,8 +212,12 @@ export const OwnerPetsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Pets</h1>
-        <p className="text-gray-600 mt-1">Manage and view your pet's information</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+          My Pets
+        </h1>
+        <p className="mt-1 text-slate-600">
+          Manage and view your pet&apos;s information
+        </p>
       </div>
 
       {/* Search */}
@@ -194,17 +227,17 @@ export const OwnerPetsPage: React.FC = () => {
           placeholder="Search your pets by name or breed..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-xl border-0 px-3 py-2 ring-1 ring-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         />
       </div>
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200">
+          <p>{error}</p>
           <button
             onClick={loadMyPets}
-            className="mt-2 text-red-600 hover:text-red-800 underline"
+            className="mt-2 inline-flex items-center text-sm font-medium text-red-700 underline hover:text-red-800"
           >
             Try again
           </button>
@@ -214,8 +247,10 @@ export const OwnerPetsPage: React.FC = () => {
       {/* Active Pets */}
       {activePets.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Pets</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="mb-4 text-lg font-semibold text-slate-800">
+            Active Pets
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {activePets.map((pet) => (
               <PetCard
                 key={pet.id}
@@ -231,8 +266,10 @@ export const OwnerPetsPage: React.FC = () => {
       {/* Inactive Pets */}
       {inactivePets.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Inactive Pets</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="mb-4 text-lg font-semibold text-slate-800">
+            Inactive Pets
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {inactivePets.map((pet) => (
               <PetCard
                 key={pet.id}
@@ -247,17 +284,23 @@ export const OwnerPetsPage: React.FC = () => {
 
       {/* Empty State */}
       {pets.length === 0 && !isLoading && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🐾</div>
-          <p className="text-gray-500 text-lg mb-2">You don't have any pets yet.</p>
-          <p className="text-gray-400">Contact your veterinarian to add your pets to the system.</p>
+        <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
+          <div className="mb-3 text-6xl text-slate-400">🐾</div>
+          <p className="text-lg text-slate-600">
+            You don&apos;t have any pets yet.
+          </p>
+          <p className="text-slate-500">
+            Contact your veterinarian to add your pets to the system.
+          </p>
         </div>
       )}
 
       {/* No Search Results */}
       {filteredPets.length === 0 && pets.length > 0 && searchTerm && (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No pets found matching "{searchTerm}".</p>
+        <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
+          <p className="text-lg text-slate-600">
+            No pets found matching &quot;{searchTerm}&quot;.
+          </p>
         </div>
       )}
 

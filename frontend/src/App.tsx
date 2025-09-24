@@ -19,7 +19,7 @@ import OwnerProfilePage from "./features/owner/OwnerProfilePage";
 import { AdminPetsPage } from "./features/admin/pages";
 import { OwnerPetsPage } from "./features/owner/pages";
 import LandingPage from "./pages/LandingPage.tsx";
-import AdminShell from "./features/admin/layout/AdminShell"; // ⬅️ new
+import AdminShell from "./features/admin/layout/AdminShell"; //
 
 const App = () => {
   return (
