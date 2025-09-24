@@ -18,6 +18,7 @@ import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
 import { AdminPetsPage } from "./features/admin/pages";
 import { OwnerPetsPage } from "./features/owner/pages";
+import LandingPage from "./pages/LandingPage.tsx";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/" element={<LandingPage />} />
 
         {/* Protected role-based routes */}
         <Route
