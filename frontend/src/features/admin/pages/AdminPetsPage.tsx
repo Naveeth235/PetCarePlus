@@ -1,22 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { PetCard, PetForm } from '../../shared/components';
 import { adminPetsApi } from '../../shared/api/petsApi';
-import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest } from '../../shared/types/pet';
+import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest, UserSelection } from '../../shared/types/pet';
 
 interface CreatePetModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  ownerUserId: string;
 }
 
-const CreatePetModal: React.FC<CreatePetModalProps> = ({ isOpen, onClose, onSuccess, ownerUserId }) => {
+const CreatePetModal: React.FC<CreatePetModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState<UserSelection[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [loadingUsers, setLoadingUsers] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadUsers();
+    }
+  }, [isOpen]);
+
+  const loadUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const usersData = await adminPetsApi.getUsersForSelection();
+      setUsers(usersData);
+      if (usersData.length > 0) {
+        setSelectedUserId(usersData[0].id);
+      }
+    } catch (error) {
+      console.error('Failed to load users:', error);
+      alert('Failed to load users. Please try again.');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const handleSubmit = async (data: CreatePetRequest | UpdatePetRequest) => {
+    if (!selectedUserId) {
+      alert('Please select a user for the pet.');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await adminPetsApi.create(data as CreatePetRequest);
+      const createData = {
+        ...(data as CreatePetRequest),
+        ownerUserId: selectedUserId
+      };
+      await adminPetsApi.create(createData);
       onSuccess();
       onClose();
     } catch (error) {
@@ -34,13 +67,41 @@ const CreatePetModal: React.FC<CreatePetModalProps> = ({ isOpen, onClose, onSucc
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4">Create New Pet</h2>
-          <PetForm
-            mode="create"
-            onSubmit={handleSubmit}
-            onCancel={onClose}
-            isLoading={isLoading}
-            ownerUserId={ownerUserId}
-          />
+          
+          {loadingUsers ? (
+            <div className="text-center py-4">Loading users...</div>
+          ) : (
+            <div className="space-y-4">
+              {/* User Selection */}
+              <div>
+                <label htmlFor="owner" className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Owner *
+                </label>
+                <select
+                  id="owner"
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                >
+                  <option value="">Select a user</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.fullName} ({user.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Pet Form */}
+              <PetForm
+                mode="create"
+                onSubmit={handleSubmit}
+                onCancel={onClose}
+                isLoading={isLoading}
+                ownerUserId={selectedUserId} // Still needed for form validation
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -99,13 +160,42 @@ interface AssignPetModalProps {
 }
 
 const AssignPetModal: React.FC<AssignPetModalProps> = ({ isOpen, onClose, onSuccess, pet }) => {
-  const [newOwnerUserId, setNewOwnerUserId] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [users, setUsers] = useState<UserSelection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadUsers();
+    }
+  }, [isOpen]);
+
+  const loadUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const usersData = await adminPetsApi.getUsersForSelection();
+      setUsers(usersData);
+      // Don't auto-select the current owner
+      setSelectedUserId('');
+    } catch (error) {
+      console.error('Failed to load users:', error);
+      alert('Failed to load users. Please try again.');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newOwnerUserId.trim()) {
-      alert('Please enter a valid owner user ID');
+    if (!selectedUserId.trim()) {
+      alert('Please select a new owner for the pet');
+      return;
+    }
+
+    // Check if trying to assign to the same owner
+    if (selectedUserId === pet.ownerUserId) {
+      alert('This pet is already owned by the selected user');
       return;
     }
 
@@ -113,13 +203,13 @@ const AssignPetModal: React.FC<AssignPetModalProps> = ({ isOpen, onClose, onSucc
     try {
       await adminPetsApi.assign({
         petId: pet.id,
-        newOwnerUserId: newOwnerUserId.trim()
+        newOwnerUserId: selectedUserId.trim()
       });
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Failed to assign pet:', error);
-      alert('Failed to assign pet. Please check the user ID and try again.');
+      alert('Failed to assign pet. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -138,20 +228,34 @@ const AssignPetModal: React.FC<AssignPetModalProps> = ({ isOpen, onClose, onSucc
           </p>
           
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="newOwnerUserId" className="block text-sm font-medium text-gray-700 mb-1">
-                New Owner User ID *
-              </label>
-              <input
-                type="text"
-                id="newOwnerUserId"
-                value={newOwnerUserId}
-                onChange={(e) => setNewOwnerUserId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter new owner's user ID"
-                required
-              />
-            </div>
+            {loadingUsers ? (
+              <div className="text-center py-4">Loading owners...</div>
+            ) : (
+              <div className="mb-4">
+                <label htmlFor="newOwner" className="block text-sm font-medium text-gray-700 mb-1">
+                  Select New Owner *
+                </label>
+                <select
+                  id="newOwner"
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select a new owner</option>
+                  {users.map((user) => (
+                    <option 
+                      key={user.id} 
+                      value={user.id}
+                      disabled={user.id === pet.ownerUserId}
+                    >
+                      {user.fullName} ({user.email})
+                      {user.id === pet.ownerUserId ? ' (Current Owner)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="flex justify-end space-x-3">
               <button
@@ -188,7 +292,6 @@ export const AdminPetsPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [newPetOwnerUserId, setNewPetOwnerUserId] = useState('');
 
   useEffect(() => {
     loadPets();
@@ -251,11 +354,6 @@ export const AdminPetsPage: React.FC = () => {
   };
 
   const handleCreatePet = () => {
-    if (!newPetOwnerUserId.trim()) {
-      const userId = prompt('Enter the owner\'s user ID:');
-      if (!userId) return;
-      setNewPetOwnerUserId(userId);
-    }
     setIsCreateModalOpen(true);
   };
 
@@ -337,7 +435,6 @@ export const AdminPetsPage: React.FC = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={loadPets}
-        ownerUserId={newPetOwnerUserId}
       />
 
       {selectedPet && (

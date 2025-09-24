@@ -12,6 +12,13 @@ export const Species = {
 
 export type Species = typeof Species[keyof typeof Species];
 
+export interface UserSelection {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
 export interface Pet {
   id: string;
   name: string;
