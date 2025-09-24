@@ -33,9 +33,9 @@ export default function AdminSidebar({
   drawerOpen,
   onCloseDrawer,
 }: Props) {
-  // shared styles
+  // landing-page aligned surface
   const base =
-    "bg-gradient-to-b from-blue-600 to-teal-700 text-white shadow-lg z-40 p-3 md:p-4 h-full";
+    "text-slate-800 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-r border-slate-200/60 shadow-sm z-40 p-3 md:p-4 h-full";
   const width = isCollapsed ? "w-20" : "w-64";
 
   const SidebarBody = (
@@ -43,14 +43,14 @@ export default function AdminSidebar({
       {/* Header + collapse toggle */}
       <div className="flex items-center justify-between mb-4">
         <div
-          className={`font-bold ${
-            isCollapsed ? "text-lg" : "text-2xl"
+          className={`font-semibold tracking-tight ${
+            isCollapsed ? "text-base" : "text-xl"
           } truncate`}
         >
-          {isCollapsed ? "PC+" : "DashBoard"}
+          {isCollapsed ? "PC+" : "Dashboard"}
         </div>
         <button
-          className="hidden md:flex items-center justify-center bg-white/10 rounded px-2 py-1"
+          className="hidden md:inline-flex items-center justify-center rounded-lg px-2 py-1 hover:bg-slate-100 focus-visible:ring focus-visible:ring-indigo-500"
           onClick={onToggleCollapse}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!isCollapsed}
@@ -68,10 +68,13 @@ export default function AdminSidebar({
             to={m.to}
             className={({ isActive }) =>
               [
-                "flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition",
-                isActive
-                  ? "bg-yellow-400 text-blue-900 hover:bg-yellow-400"
-                  : "",
+                // base item style
+                "group flex items-center gap-3 px-3 py-2 rounded-xl transition focus-visible:ring focus-visible:ring-indigo-500",
+                // default / hover
+                "hover:bg-slate-100",
+                // active state → primary pill
+                isActive ? "bg-indigo-600 text-white shadow" : "text-slate-700",
+                // collapsed centers icon
                 isCollapsed ? "justify-center" : "",
               ].join(" ")
             }
@@ -100,7 +103,13 @@ export default function AdminSidebar({
             onClick={onCloseDrawer}
             aria-hidden="true"
           />
-          <div className="absolute inset-y-0 left-0">{SidebarBody}</div>
+          <div
+            className="absolute inset-y-0 left-0"
+            role="dialog"
+            aria-modal="true"
+          >
+            {SidebarBody}
+          </div>
         </div>
       )}
     </>
