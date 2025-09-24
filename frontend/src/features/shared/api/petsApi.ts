@@ -1,4 +1,4 @@
-import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest, AssignPetRequest } from '../types/pet';
+import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest, AssignPetRequest, UserSelection } from '../types/pet';
 import { getToken } from '../../auth/token';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -86,6 +86,14 @@ export const adminPetsApi = {
       body: JSON.stringify(assignData)
     });
     return handleResponse<Pet>(response);
+  },
+
+  // Get users for pet assignment selection (Admin only)
+  getUsersForSelection: async (): Promise<UserSelection[]> => {
+    const response = await fetch(`${API_BASE}/users/selection`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<UserSelection[]>(response);
   }
 };
 
