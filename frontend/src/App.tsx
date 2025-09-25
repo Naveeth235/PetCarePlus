@@ -16,7 +16,7 @@ import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
 import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
-import { AdminPetsPage } from "./features/admin/pages";
+import { AdminPetsPage, AdminPetAddPage, AdminPetEditPage } from "./features/admin/pages";
 import { OwnerPetsPage } from "./features/owner/pages";
 import LandingPage from "./pages/LandingPage.tsx";
 import AdminShell from "./features/admin/layout/AdminShell"; //
@@ -84,6 +84,8 @@ const App = () => {
           <Route path="users/:id" element={<AdminUserEditPage />} />
 
           <Route path="pets" element={<AdminPetsPage />} />
+          <Route path="pets/new" element={<AdminPetAddPage />} />
+          <Route path="pets/:id/edit" element={<AdminPetEditPage />} />
 
           {/* future: appointments, inventory */}
           {/* <Route path="appointments" element={<AdminAppointmentsPage />} /> */}
