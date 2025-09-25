@@ -1,7 +1,7 @@
 # -------------------------------
 # Stage 1: Build backend
 # -------------------------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS backend-build
 WORKDIR /src
 
 # Copy csproj files and restore as distinct layers for better caching
@@ -43,7 +43,7 @@ RUN npm run build
 # -------------------------------
 # Stage 3: Final image
 # -------------------------------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
 # Copy backend published output
