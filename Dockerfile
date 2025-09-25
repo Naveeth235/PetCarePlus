@@ -4,16 +4,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
 WORKDIR /src
 
-# Copy csproj files and restore as distinct layers
+# Copy csproj files and restore as distinct layers for better caching
 COPY ["backend/src/PetCare.Api/PetCare.Api.csproj", "PetCare.Api/"]
 COPY ["backend/src/PetCare.Application/PetCare.Application.csproj", "PetCare.Application/"]
 COPY ["backend/src/PetCare.Domain/PetCare.Domain.csproj", "PetCare.Domain/"]
 COPY ["backend/src/PetCare.Infrastructure/PetCare.Infrastructure.csproj", "PetCare.Infrastructure/"]
 COPY ["backend/Directory.Build.props", "./"]
 
+# Restore dependencies (cached layer)
 RUN dotnet restore "PetCare.Api/PetCare.Api.csproj"
 
-# Copy everything else and build
+# Copy source code and build
 COPY backend/src/ .
 RUN dotnet publish "PetCare.Api/PetCare.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
