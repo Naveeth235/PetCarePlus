@@ -36,7 +36,7 @@ export async function fetchVets(
   if (params.page) q.set("page", String(params.page));
   if (params.pageSize) q.set("pageSize", String(params.pageSize));
 
-  const url = `${BASE}/api/admin/users/vets${q.toString() ? `?${q}` : ""}`;
+  const url = `${BASE}/admin/users/vets${q.toString() ? `?${q}` : ""}`;
 
   const timeoutMs = opts?.timeoutMs ?? 10_000;
   const controller = new AbortController();

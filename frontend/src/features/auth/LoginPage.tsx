@@ -19,14 +19,14 @@ type LoginErr = {
   code: "invalid" | "inactive" | "failed" | "network";
 };
 
-// call POST /api/auth/login
+// call POST /auth/login
 async function loginApi(body: {
   email: string;
   password: string;
 }): Promise<LoginOk | LoginErr> {
   if (!BASE) return { ok: false, code: "failed" };
   try {
-    const res = await fetch(`${BASE}/api/auth/login`, {
+    const res = await fetch(`${BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

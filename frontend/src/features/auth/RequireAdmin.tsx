@@ -35,8 +35,8 @@ function AdminVerifier({ children }: { children: ReactNode }) {
         const token = localStorage.getItem(TOKEN_KEY);
         if (!token || !BASE) return setAllowed(false);
 
-        // try /api/users/me first; if 404, fallback to /api/auth/me
-        const urls = [`${BASE}/api/users/me`, `${BASE}/api/auth/me`];
+        // try /users/me first; if 404, fallback to /auth/me
+        const urls = [`${BASE}/users/me`, `${BASE}/auth/me`];
         let roles: string[] | null = null;
 
         for (const url of urls) {

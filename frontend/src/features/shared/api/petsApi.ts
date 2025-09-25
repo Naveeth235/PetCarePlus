@@ -2,7 +2,7 @@ import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest, AssignPetRequ
 import { getToken } from '../../auth/token';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
-const API_BASE = `${API_BASE_URL}/api/pets`;
+const API_BASE = `${API_BASE_URL}/pets`;
 
 // Get auth token from localStorage
 const getAuthHeaders = () => {

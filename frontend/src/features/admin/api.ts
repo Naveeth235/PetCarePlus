@@ -41,7 +41,7 @@ export async function createVet(
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const res = await fetch(`${BASE}/api/admin/users/vets`, {
+    const res = await fetch(`${BASE}/admin/users/vets`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

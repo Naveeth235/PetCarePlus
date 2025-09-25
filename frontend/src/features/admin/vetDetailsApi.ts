@@ -29,7 +29,7 @@ export async function fetchVetById(
   const token = getToken();
   if (!token) return { ok: false, code: "unauthorized" };
 
-  const url = `${BASE}/api/admin/users/vets/${encodeURIComponent(id)}`;
+  const url = `${BASE}/admin/users/vets/${encodeURIComponent(id)}`;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts?.timeoutMs ?? 10000);
 
