@@ -123,11 +123,11 @@ export const petsApi = {
   },
 
   // Debug endpoint to check user claims
-  debugMe: async (): Promise<any> => {
+  debugMe: async (): Promise<unknown> => {
     const response = await fetch(`${API_BASE}/debug/me`, {
       headers: getAuthHeaders()
     });
-    return handleResponse<any>(response);
+    return handleResponse<unknown>(response);
   },
 
   // Get pets by owner ID

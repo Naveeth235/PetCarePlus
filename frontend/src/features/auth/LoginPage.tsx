@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { PawPrint } from "lucide-react";
 
 // ---- tiny helpers (you can move these to a shared auth/api module later)
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined;
+const BASE = (import.meta.env?.VITE_API_BASE_URL as string) || undefined;
 const TOKEN_KEY = "APP_AT";
 const setToken = (t: string) => localStorage.setItem(TOKEN_KEY, t);
 

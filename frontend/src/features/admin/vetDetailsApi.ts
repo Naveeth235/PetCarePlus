@@ -1,5 +1,5 @@
 import { getToken } from "../auth/token";
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined;
+const BASE = (import.meta.env?.VITE_API_BASE_URL as string) || undefined;
 
 export type VetDetails = {
   id: string;
@@ -49,10 +49,13 @@ export async function fetchVetById(
     let txt = "";
     try {
       txt = await res.text();
-    } catch {}
+    } catch {
+      // JSON parsing failed, ignore
+    }
     return { ok: false, code: "failed", detail: txt || `HTTP ${res.status}` };
-  } catch (e: any) {
-    if (e?.name === "AbortError") return { ok: false, code: "timeout" };
+  } catch (e: unknown) {
+    if (e && typeof e === 'object' && 'name' in e && e.name === "AbortError") 
+      return { ok: false, code: "timeout" };
     return { ok: false, code: "network", detail: String(e) };
   } finally {
     clearTimeout(timer);

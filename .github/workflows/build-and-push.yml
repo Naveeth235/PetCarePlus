@@ -2,7 +2,7 @@ name: Build and Push Container to GHCR
 
 on:
   push:
-    branches: [dev, main, prod]
+    branches: [dev]
     paths:
       - 'backend/**'
       - 'frontend/**'
