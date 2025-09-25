@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { PawPrint } from "lucide-react";
 
 // ---- tiny helpers (you can move these to a shared auth/api module later)
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined;
+const BASE = (import.meta.env?.VITE_API_BASE_URL as string) || undefined;
 const TOKEN_KEY = "APP_AT";
 const setToken = (t: string) => localStorage.setItem(TOKEN_KEY, t);
 
@@ -19,14 +19,14 @@ type LoginErr = {
   code: "invalid" | "inactive" | "failed" | "network";
 };
 
-// call POST /api/auth/login
+// call POST /auth/login
 async function loginApi(body: {
   email: string;
   password: string;
 }): Promise<LoginOk | LoginErr> {
   if (!BASE) return { ok: false, code: "failed" };
   try {
-    const res = await fetch(`${BASE}/api/auth/login`, {
+    const res = await fetch(`${BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

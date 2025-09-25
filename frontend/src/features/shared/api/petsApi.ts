@@ -2,7 +2,7 @@ import type { Pet, PetSummary, CreatePetRequest, UpdatePetRequest, AssignPetRequ
 import { getToken } from '../../auth/token';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
-const API_BASE = `${API_BASE_URL}/api/pets`;
+const API_BASE = `${API_BASE_URL}/pets`;
 
 // Get auth token from localStorage
 const getAuthHeaders = () => {
@@ -123,11 +123,11 @@ export const petsApi = {
   },
 
   // Debug endpoint to check user claims
-  debugMe: async (): Promise<any> => {
+  debugMe: async (): Promise<unknown> => {
     const response = await fetch(`${API_BASE}/debug/me`, {
       headers: getAuthHeaders()
     });
-    return handleResponse<any>(response);
+    return handleResponse<unknown>(response);
   },
 
   // Get pets by owner ID
