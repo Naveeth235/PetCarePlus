@@ -1,10 +1,20 @@
+import { Link } from "react-router-dom";
+
 const OwnerPage = () => {
   return (
     <main style={{ padding: 24 }}>
       <h1>Owner Dashboard</h1>
       <ul style={{ textAlign: "left", marginTop: 12 }}>
-        <li>My Pets</li>
-        <li>Medical History (read-only)</li>
+        <li>
+          <Link className="text-blue-600 underline" to="/owner/pets">
+            My Pets
+          </Link>
+        </li>
+        <li>
+          <Link className="text-blue-600 underline" to="/owner/medical-records">
+            Pet Medical Records
+          </Link>
+        </li>
         <li>Request Appointment</li>
         <li>My Appointments</li>
       </ul>

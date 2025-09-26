@@ -62,6 +62,7 @@ const AdminDashboard: React.FC = () => {
     { label: "Vet Management", to: "/admin/vets" },
     { label: "User Management", to: "/admin/users" },
     { label: "Pets", to: "/admin/pets" },
+    { label: "Medical Records", to: "/admin/medical-records" },
     { label: "Appointments", to: "/admin/appointments" },
     { label: "Inventory", to: "/admin/inventory" },
   ];
