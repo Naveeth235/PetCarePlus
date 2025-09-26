@@ -1,0 +1,43 @@
+name: Deploy to Azure App Service
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Container to GHCR"]
+    types:
+      - completed
+    branches: [dev]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          images: 'ghcr.io/naveeth235/petcareplus:latest'
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 Azure Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **App Service**: \`${{ secrets.AZURE_WEBAPP_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Deployed**: \`ghcr.io/naveeth235/petcareplus:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Deployment Completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Access Your Application" >> $GITHUB_STEP_SUMMARY
+          echo "Your application should be available at:" >> $GITHUB_STEP_SUMMARY
+          echo "https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net" >> $GITHUB_STEP_SUMMARY
