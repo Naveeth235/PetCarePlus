@@ -76,18 +76,24 @@ const PetMedicalRecords: React.FC<PetMedicalRecordsProps> = ({
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-8">
-        <div className="text-gray-600">Loading medical records...</div>
+      <div className="flex justify-center items-center p-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+          <div className="text-gray-600 font-medium">Loading medical records...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="bg-red-50 border-l-4 border-red-400 rounded-r-xl p-6">
         <div className="flex items-center text-red-700">
-          <AlertCircle className="w-5 h-5 mr-2" />
-          {error}
+          <AlertCircle className="w-6 h-6 mr-3" />
+          <div>
+            <h3 className="font-medium">Error Loading Medical Records</h3>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -100,86 +106,90 @@ const PetMedicalRecords: React.FC<PetMedicalRecordsProps> = ({
   const renderOverview = () => (
     <div className="space-y-6">
       {/* Vaccination Status */}
-      <div className="bg-white border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold flex items-center">
+      <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold flex items-center text-blue-800">
             <Pill className="w-5 h-5 mr-2 text-blue-600" />
             Vaccination Status
           </h3>
           {vaccinationReport?.isUpToDate ? (
-            <CheckCircle className="w-5 h-5 text-green-600" />
+            <CheckCircle className="w-6 h-6 text-green-600" />
           ) : (
-            <AlertCircle className="w-5 h-5 text-red-600" />
+            <AlertCircle className="w-6 h-6 text-red-600" />
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center p-3 bg-green-50 rounded">
-            <div className="text-2xl font-bold text-green-600">
+          <div className="text-center p-4 bg-green-50 rounded-xl border border-green-200">
+            <div className="text-2xl font-bold text-green-700">
               {vaccinationReport?.vaccinations.length || 0}
             </div>
-            <div className="text-sm text-green-700">Total Vaccinations</div>
+            <div className="text-sm text-green-600 font-medium">Total Vaccinations</div>
           </div>
-          <div className="text-center p-3 bg-red-50 rounded">
-            <div className="text-2xl font-bold text-red-600">
+          <div className="text-center p-4 bg-red-50 rounded-xl border border-red-200">
+            <div className="text-2xl font-bold text-red-700">
               {vaccinationReport?.overdueVaccinations.length || 0}
             </div>
-            <div className="text-sm text-red-700">Overdue</div>
+            <div className="text-sm text-red-600 font-medium">Overdue</div>
           </div>
-          <div className="text-center p-3 bg-yellow-50 rounded">
-            <div className="text-2xl font-bold text-yellow-600">
+          <div className="text-center p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+            <div className="text-2xl font-bold text-yellow-700">
               {vaccinationReport?.upcomingVaccinations.length || 0}
             </div>
-            <div className="text-sm text-yellow-700">Upcoming</div>
+            <div className="text-sm text-yellow-600 font-medium">Upcoming</div>
           </div>
         </div>
       </div>
 
       {/* Treatment Summary */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-lg font-semibold flex items-center mb-3">
-          <Stethoscope className="w-5 h-5 mr-2 text-purple-600" />
+      <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+        <h3 className="text-lg font-semibold flex items-center mb-4 text-blue-800">
+          <Stethoscope className="w-5 h-5 mr-2 text-blue-600" />
           Treatment History
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-purple-50 rounded">
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="text-center p-4 bg-purple-50 rounded-xl border border-purple-200">
+            <div className="text-2xl font-bold text-purple-700">
               {treatmentReport?.totalTreatments || 0}
             </div>
-            <div className="text-sm text-purple-700">Total Treatments</div>
+            <div className="text-sm text-purple-600 font-medium">Total Treatments</div>
           </div>
-          <div className="text-center p-3 bg-blue-50 rounded">
-            <div className="text-lg font-semibold text-blue-600">
+          <div className="text-center p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <div className="text-lg font-semibold text-blue-700">
               {treatmentReport?.lastTreatmentDate ? 
                 formatDate(treatmentReport.lastTreatmentDate) : 'None'}
             </div>
-            <div className="text-sm text-blue-700">Last Treatment</div>
+            <div className="text-sm text-blue-600 font-medium">Last Treatment</div>
           </div>
         </div>
       </div>
 
       {/* Recent Records */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-lg font-semibold flex items-center mb-3">
-          <FileText className="w-5 h-5 mr-2 text-gray-600" />
+      <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-gray-500">
+        <h3 className="text-lg font-semibold flex items-center mb-4 text-blue-800">
+          <FileText className="w-5 h-5 mr-2 text-blue-600" />
           Recent Medical Records
         </h3>
         {medicalRecords.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">No medical records found</p>
+          <div className="text-center py-8">
+            <div className="text-4xl text-gray-400 mb-2">📋</div>
+            <p className="text-gray-500 font-medium">No medical records found</p>
+            <p className="text-gray-400 text-sm">Records will appear here once added</p>
+          </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {medicalRecords.slice(0, 5).map((record) => (
-              <div key={record.id} className="border-l-4 border-blue-300 bg-gray-50 p-3 rounded-r">
+              <div key={record.id} className="bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-blue-300 p-4 rounded-r-xl">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-medium">{record.title}</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="font-semibold text-blue-900">{record.title}</h4>
+                    <p className="text-sm text-gray-600 mt-1">
                       {MEDICAL_RECORD_TYPE_LABELS[record.recordType]} • {formatDate(record.recordDate)}
                     </p>
                     {record.description && (
-                      <p className="text-sm text-gray-700 mt-1">{record.description}</p>
+                      <p className="text-sm text-gray-700 mt-2">{record.description}</p>
                     )}
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">
                     Dr. {record.vetFullName || 'Unknown'}
                   </span>
                 </div>
@@ -361,55 +371,56 @@ const PetMedicalRecords: React.FC<PetMedicalRecordsProps> = ({
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-blue-800 mb-2">
           Medical Records - {petName}
         </h1>
-        <p className="text-gray-600 mt-1">
-          {isOwner ? 'View your pet\'s medical history' : 'Medical history overview'}
+        <p className="text-gray-600 mb-6">
+          {isOwner ? 'View your pet\'s medical history 🏥📋' : 'Medical history overview'}
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
+      <div className="bg-white rounded-xl shadow-md p-1 border-l-4 border-blue-500 mb-6">
+        <nav className="flex space-x-1">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeTab === 'overview'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('vaccinations')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeTab === 'vaccinations'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             Vaccinations
           </button>
           <button
             onClick={() => setActiveTab('treatments')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeTab === 'treatments'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             Treatments
           </button>
           <button
             onClick={() => setActiveTab('reports')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeTab === 'reports'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             Reports
