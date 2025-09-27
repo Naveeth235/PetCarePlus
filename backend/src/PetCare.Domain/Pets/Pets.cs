@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PetCare.Domain.Pets;
 
@@ -23,6 +24,12 @@ public class Pet
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+
+    // // Navigation properties for medical records
+    // public ICollection<MedicalRecords.MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecords.MedicalRecord>();
+    // public ICollection<MedicalRecords.Vaccination> Vaccinations { get; set; } = new List<MedicalRecords.Vaccination>();
+    // public ICollection<MedicalRecords.Treatment> Treatments { get; set; } = new List<MedicalRecords.Treatment>();
+    // public ICollection<MedicalRecords.Prescription> Prescriptions { get; set; } = new List<MedicalRecords.Prescription>();
 
     // Computed properties
     public int? AgeInYears => DateOfBirth.HasValue 

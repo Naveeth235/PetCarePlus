@@ -10,6 +10,8 @@ using PetCare.Application.Pets.DTOs;
 using PetCare.Application.Pets.Queries.GetPetById;
 using PetCare.Application.Pets.Queries.GetPets;
 using PetCare.Application.Pets.Queries.GetPetsByOwner;
+using Microsoft.AspNetCore.Identity;
+using PetCare.Infrastructure.Auth;
 
 namespace PetCare.Api.Controllers;
 
@@ -19,10 +21,12 @@ namespace PetCare.Api.Controllers;
 public class PetsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public PetsController(IMediator mediator)
+    public PetsController(IMediator mediator, UserManager<ApplicationUser> userManager)
     {
         _mediator = mediator;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -75,6 +79,41 @@ public class PetsController : ControllerBase
         var query = new GetPetsByOwnerQuery(ownerId);
         var result = await _mediator.Send(query);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Get users for pet assignment selection (Admin only)
+    /// </summary>
+    [HttpGet("users/selection")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<IReadOnlyList<UserSelectionDto>>> GetUsersForSelection()
+    {
+        try
+        {
+            var users = _userManager.Users.ToList();
+            var userSelection = new List<UserSelectionDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                // Only include users with Owner role
+                if (roles.Contains("Owner"))
+                {
+                    userSelection.Add(new UserSelectionDto(
+                        user.Id,
+                        user.FullName ?? "Unknown",
+                        user.Email ?? "No Email",
+                        "Owner"
+                    ));
+                }
+            }
+
+            return Ok(userSelection.OrderBy(u => u.FullName).ToList());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Failed to load users: {ex.Message}");
+        }
     }
 
     /// <summary>

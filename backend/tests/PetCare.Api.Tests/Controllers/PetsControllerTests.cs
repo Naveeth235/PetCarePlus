@@ -14,18 +14,48 @@ using PetCare.Application.Pets.Queries.GetPets;
 using PetCare.Application.Pets.Queries.GetPetsByOwner;
 using PetCare.Domain.Pets;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using PetCare.Infrastructure.Auth;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace PetCare.Api.Tests.Controllers;
 
 public class PetsControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
     private readonly PetsController _controller;
 
     public PetsControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
-        _controller = new PetsController(_mediatorMock.Object);
+        _userManagerMock = CreateMockUserManager();
+        _controller = new PetsController(_mediatorMock.Object, _userManagerMock.Object);
+    }
+
+    private static Mock<UserManager<ApplicationUser>> CreateMockUserManager()
+    {
+        var store = new Mock<IUserStore<ApplicationUser>>();
+        var optionsAccessor = new Mock<IOptions<IdentityOptions>>();
+        var passwordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
+        var userValidators = new List<IUserValidator<ApplicationUser>>();
+        var passwordValidators = new List<IPasswordValidator<ApplicationUser>>();
+        var keyNormalizer = new Mock<ILookupNormalizer>();
+        var errors = new Mock<IdentityErrorDescriber>();
+        var services = new Mock<IServiceProvider>();
+        var logger = new Mock<ILogger<UserManager<ApplicationUser>>>();
+
+        return new Mock<UserManager<ApplicationUser>>(
+            store.Object,
+            optionsAccessor.Object,
+            passwordHasher.Object,
+            userValidators,
+            passwordValidators,
+            keyNormalizer.Object,
+            errors.Object,
+            services.Object,
+            logger.Object);
     }
 
     private void SetupUserClaims(string userId, string role)

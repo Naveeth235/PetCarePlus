@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+// App.tsx (only the Routes section shown for brevity)
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./features/auth/LoginPage.tsx";
 import RegistrationPage from "./features/auth/RegistrationPage.tsx";
-
 import OwnerPage from "./features/owner/OwnerPage.tsx";
 import VetPage from "./features/vet/VetPage.tsx";
-import AdminDashboard from "./features/admin/AdminDashboard.tsx"; // updated import
+import AdminDashboard from "./features/admin/AdminDashboard.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RequireAdmin from "./features/auth/RequireAdmin";
@@ -16,23 +16,21 @@ import AdminVetDetailsPage from "./features/admin/AdminVetDetailsPage.tsx";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
 import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
-import { AdminPetsPage } from "./features/admin/pages";
+import { AdminPetsPage, AdminPetAddPage, AdminPetEditPage } from "./features/admin/pages";
 import { OwnerPetsPage } from "./features/owner/pages";
-import VetMedicalRecords from "./features/vet/VetMedicalRecords";
-import PetMedicalRecordsWrapper from "./features/owner/PetMedicalRecordsWrapper";
+import LandingPage from "./pages/LandingPage.tsx";
+import AdminShell from "./features/admin/layout/AdminShell"; //
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Root route redirects to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Public routes */}
+        {/* Public */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/" element={<LandingPage />} />
 
-        {/* Protected role-based routes */}
+        {/* Owner/Vet */}
         <Route
           path="/owner"
           element={
@@ -54,69 +52,6 @@ const App = () => {
           }
         />
         <Route
-          path="/vet/medical-records"
-          element={
-            <RequireAuth>
-              {/* Both VET and ADMIN roles can access medical records management */}
-              <RequireRole roles={["VET", "ADMIN"]}>
-                <VetMedicalRecords />
-              </RequireRole>
-            </RequireAuth>
-          }
-        />
-
-        {/* Admin routes */}
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <AdminDashboard />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/pets"
-          element={
-            <RequireAdmin>
-              <AdminPetsPage />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/medical-records"
-          element={
-            <RequireAdmin>
-              <VetMedicalRecords />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/vets/new"
-          element={
-            <RequireAdmin>
-              <AdminAddVetPage />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/vets"
-          element={
-            <RequireAdmin>
-              <AdminVetListPage />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/vets/:id"
-          element={
-            <RequireAdmin>
-              <AdminVetDetailsPage />
-            </RequireAdmin>
-          }
-        />
-
-        {/* Owner routes */}
-        <Route
           path="/owner/pets"
           element={
             <RequireAuth>
@@ -126,34 +61,39 @@ const App = () => {
             </RequireAuth>
           }
         />
+        <Route path="/owner/profile" element={<OwnerProfilePage />} />
+
+        {/* Admin (parent shell + nested children) */}
         <Route
-          path="/owner/medical-records"
+          path="/admin"
           element={
-            <RequireAuth>
-              <RequireRole roles={["OWNER", "ADMIN"]}>
-                <OwnerPetsPage />
-              </RequireRole>
-            </RequireAuth>
+            <RequireAdmin>
+              <AdminShell />
+            </RequireAdmin>
           }
-        />
-        <Route
-          path="/owner/pets/:petId/medical-records"
-          element={
-            <RequireAuth>
-              <RequireRole roles={["OWNER", "ADMIN", "VET"]}>
-                <PetMedicalRecordsWrapper />
-              </RequireRole>
-            </RequireAuth>
-          }
-        />
+        >
+          {/* index = /admin */}
+          <Route index element={<AdminDashboard />} />
+
+          {/* children */}
+          <Route path="vets" element={<AdminVetListPage />} />
+          <Route path="vets/new" element={<AdminAddVetPage />} />
+          <Route path="vets/:id" element={<AdminVetDetailsPage />} />
+
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="users/:id" element={<AdminUserEditPage />} />
+
+          <Route path="pets" element={<AdminPetsPage />} />
+          <Route path="pets/new" element={<AdminPetAddPage />} />
+          <Route path="pets/:id/edit" element={<AdminPetEditPage />} />
+
+          {/* future: appointments, inventory */}
+          {/* <Route path="appointments" element={<AdminAppointmentsPage />} /> */}
+          {/* <Route path="inventory" element={<AdminInventoryPage />} /> */}
+        </Route>
 
         {/* Misc */}
         <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
-        <Route path="/admin/users/:id" element={<AdminUserEditPage />} />
-        <Route path="/owner/profile" element={<OwnerProfilePage />} />
-
-        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
