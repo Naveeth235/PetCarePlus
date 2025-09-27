@@ -95,10 +95,10 @@ builder.Services.AddScoped<PetCare.Application.Common.Interfaces.IJwtTokenGenera
 
 // ---------- Repositories ----------
 builder.Services.AddScoped<IPetRepository, PetRepository>();
-// builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
-// builder.Services.AddScoped<IVaccinationRepository, VaccinationRepository>();
-// builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
-// builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
+builder.Services.AddScoped<IVaccinationRepository, VaccinationRepository>();
+builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 
 // ---------- Services ----------
 builder.Services.AddScoped<IUserService, PetCare.Infrastructure.Services.UserService>();

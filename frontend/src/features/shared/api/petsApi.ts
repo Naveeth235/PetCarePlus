@@ -8,6 +8,21 @@ const API_BASE = `${API_BASE_URL}/pets`;
 const getAuthHeaders = () => {
   const token = getToken();
   console.log('Auth token:', token ? 'Present' : 'Missing'); // Debug log
+  console.log('Token value:', token); // Debug: show actual token
+  console.log('Full Authorization header:', token ? `Bearer ${token}` : 'No token'); // Debug log
+  
+  // Debug: decode token to see claims
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('Token payload:', payload);
+      console.log('Token role:', payload.role || payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']);
+      console.log('Token expiration:', new Date(payload.exp * 1000));
+    } catch (e) {
+      console.error('Failed to decode token:', e);
+    }
+  }
+  
   return {
     'Content-Type': 'application/json',
     ...(token && { 'Authorization': `Bearer ${token}` })
