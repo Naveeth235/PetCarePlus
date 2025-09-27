@@ -505,70 +505,74 @@ const AddMedicalRecordForm: React.FC<AddMedicalRecordFormProps> = ({
   );
 
   return (
-    <div className="bg-white border rounded-lg p-6">
+    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-2xl font-bold text-blue-800 mb-2">
           Add Medical Record - {petName}
         </h2>
-        <p className="text-gray-600 mt-1">Create a new medical record for this pet</p>
+        <p className="text-gray-600">Create a new medical record for this pet 📋✨</p>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded p-3">
-          <p className="text-red-700 text-sm">{error}</p>
+        <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+          <p className="text-red-700 text-sm font-medium">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         {/* Record Type Selection */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Record Type
+          <label className="block text-sm font-semibold text-blue-800 mb-3">
+            Select Record Type
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button
               type="button"
               onClick={() => setRecordType('general')}
-              className={`p-3 text-sm rounded border ${
+              className={`p-4 text-sm rounded-xl border-2 transition-all duration-200 ${
                 recordType === 'general'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
               }`}
             >
-              General Record
+              <div className="font-medium">General Record</div>
+              <div className="text-xs text-gray-500 mt-1">Basic medical info</div>
             </button>
             <button
               type="button"
               onClick={() => setRecordType('vaccination')}
-              className={`p-3 text-sm rounded border ${
+              className={`p-4 text-sm rounded-xl border-2 transition-all duration-200 ${
                 recordType === 'vaccination'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
               }`}
             >
-              Vaccination
+              <div className="font-medium">Vaccination</div>
+              <div className="text-xs text-gray-500 mt-1">Vaccine records</div>
             </button>
             <button
               type="button"
               onClick={() => setRecordType('treatment')}
-              className={`p-3 text-sm rounded border ${
+              className={`p-4 text-sm rounded-xl border-2 transition-all duration-200 ${
                 recordType === 'treatment'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
               }`}
             >
-              Treatment
+              <div className="font-medium">Treatment</div>
+              <div className="text-xs text-gray-500 mt-1">Medical procedures</div>
             </button>
             <button
               type="button"
               onClick={() => setRecordType('prescription')}
-              className={`p-3 text-sm rounded border ${
+              className={`p-4 text-sm rounded-xl border-2 transition-all duration-200 ${
                 recordType === 'prescription'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
               }`}
             >
-              Prescription
+              <div className="font-medium">Prescription</div>
+              <div className="text-xs text-gray-500 mt-1">Medications</div>
             </button>
           </div>
         </div>
@@ -580,11 +584,11 @@ const AddMedicalRecordForm: React.FC<AddMedicalRecordFormProps> = ({
         {recordType === 'prescription' && renderPrescriptionForm()}
 
         {/* Submit Buttons */}
-        <div className="flex justify-end space-x-4 mt-6 pt-4 border-t">
+        <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 transition-colors flex items-center"
+            className="inline-flex items-center rounded-2xl border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus-visible:ring focus-visible:ring-gray-400 transition-colors"
           >
             <X className="w-4 h-4 mr-2" />
             Cancel
@@ -592,7 +596,7 @@ const AddMedicalRecordForm: React.FC<AddMedicalRecordFormProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+            className="inline-flex items-center rounded-2xl bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring focus-visible:ring-blue-500 disabled:opacity-50 transition-colors"
           >
             <Save className="w-4 h-4 mr-2" />
             {loading ? 'Saving...' : 'Save Record'}

@@ -92,21 +92,32 @@ const VetMedicalRecords: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+          <div className="text-gray-600 font-medium">Loading pets...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded p-4">
-        <p className="text-red-700">{error}</p>
-        <button
-          onClick={loadPets}
-          className="mt-2 text-red-600 hover:text-red-800 underline"
-        >
-          Try again
-        </button>
+      <div className="bg-red-50 border-l-4 border-red-400 rounded-r-xl p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-red-700">
+            <div className="w-6 h-6 mr-3">⚠️</div>
+            <div>
+              <h3 className="font-medium">Error Loading Pets</h3>
+              <p className="text-sm mt-1">{error}</p>
+            </div>
+          </div>
+          <button
+            onClick={loadPets}
+            className="ml-4 text-red-600 hover:text-red-800 underline font-medium"
+          >
+            Try again
+          </button>
+        </div>
       </div>
     );
   }
@@ -115,12 +126,14 @@ const VetMedicalRecords: React.FC = () => {
   if (showAddForm && selectedPet) {
     return (
       <div className="space-y-6">
-        <button
-          onClick={handleFormCancel}
-          className="text-blue-600 hover:text-blue-800 flex items-center"
-        >
-          ← Back to pets list
-        </button>
+        <div className="flex items-center text-blue-600 hover:text-blue-800 mb-4">
+          <button
+            onClick={handleFormCancel}
+            className="flex items-center font-medium"
+          >
+            ← Back to pets list
+          </button>
+        </div>
         <AddMedicalRecordForm
           petId={selectedPet.id}
           petName={selectedPet.name}
@@ -138,13 +151,13 @@ const VetMedicalRecords: React.FC = () => {
         <div className="flex items-center justify-between">
           <button
             onClick={handleBackToList}
-            className="text-blue-600 hover:text-blue-800 flex items-center"
+            className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
           >
             ← Back to pets list
           </button>
           <button
             onClick={() => handleAddRecord(selectedPet)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors flex items-center"
+            className="inline-flex items-center rounded-2xl bg-blue-600 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-700 focus-visible:ring focus-visible:ring-blue-500 transition-colors"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Record
@@ -158,15 +171,16 @@ const VetMedicalRecords: React.FC = () => {
   // Show pets list
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Medical Records Management</h1>
-          <p className="text-gray-600">Manage medical records for all pets</p>
-        </div>
+      {/* Header */}
+      <div>
+        <h2 className="text-3xl font-bold text-blue-800 mb-2">Medical Records Management</h2>
+        <p className="text-gray-600 mb-6">
+          Manage medical records for all pets 🏥📋
+        </p>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white border rounded-lg p-4">
+      <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -178,7 +192,7 @@ const VetMedicalRecords: React.FC = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <button className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+          <button className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </button>
@@ -187,54 +201,70 @@ const VetMedicalRecords: React.FC = () => {
 
       {/* Pets Grid */}
       {filteredPets.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center border-l-4 border-gray-400">
+          <p className="text-gray-500 text-lg mb-2">
             {searchTerm ? 'No pets found matching your search.' : 'No pets available.'}
           </p>
+          {searchTerm && (
+            <p className="text-gray-400 text-sm">
+              Try adjusting your search criteria
+            </p>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPets.map((pet) => (
-            <div key={pet.id} className="bg-white border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div key={pet.id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-300 hover:shadow-lg transition-all duration-200 hover:border-blue-500">
               <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">{pet.name}</h3>
-                <p className="text-gray-600">{getSpeciesLabel(pet.species)} • {pet.breed || 'Mixed breed'}</p>
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-lg font-semibold text-blue-900">{pet.name}</h3>
+                  <span
+                    className={`inline-block text-xs px-2 py-1 rounded-full ${
+                      pet.isActive
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {pet.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <p className="text-gray-600 mb-1">{getSpeciesLabel(pet.species)} • {pet.breed || 'Mixed breed'}</p>
                 {pet.ownerFullName && (
                   <p className="text-sm text-gray-500">Owner: {pet.ownerFullName}</p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="space-y-2 mb-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Age:</span>
-                    <span className="ml-1">{pet.ageInYears || 'Unknown'} years</span>
+                    <span className="text-gray-500 font-medium">Age:</span>
+                    <span className="ml-2 text-gray-700">{pet.ageInYears || 'Unknown'} years</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Species:</span>
-                    <span className="ml-1">{getSpeciesLabel(pet.species)}</span>
+                    <span className="text-gray-500 font-medium">Species:</span>
+                    <span className="ml-2 text-gray-700">{getSpeciesLabel(pet.species)}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Weight:</span>
-                    <span className="ml-1">{pet.weight ? `${pet.weight} kg` : 'Not recorded'}</span>
+                    <span className="text-gray-500 font-medium">Weight:</span>
+                    <span className="ml-2 text-gray-700">{pet.weight ? `${pet.weight} kg` : 'Not recorded'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Color:</span>
-                    <span className="ml-1">{pet.color || 'Not recorded'}</span>
+                    <span className="text-gray-500 font-medium">Color:</span>
+                    <span className="ml-2 text-gray-700">{pet.color || 'Not recorded'}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t flex gap-2">
+              <div className="pt-4 border-t border-gray-100 flex gap-2">
                 <button
                   onClick={() => handleViewRecords(pet)}
-                  className="flex-1 px-3 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors text-sm"
+                  className="flex-1 px-3 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors text-sm font-medium"
                 >
                   View Records
                 </button>
                 <button
                   onClick={() => handleAddRecord(pet)}
-                  className="flex-1 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm flex items-center justify-center"
+                  className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center"
                 >
                   <Plus className="w-4 h-4 mr-1" />
                   Add Record
