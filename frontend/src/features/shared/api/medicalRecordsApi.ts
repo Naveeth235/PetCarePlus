@@ -42,7 +42,7 @@ export const medicalRecordsApi = {
   // Get medical records for a pet
   async getMedicalRecordsByPet(petId: string): Promise<ApiResponse<MedicalRecord[]>> {
     try {
-      const response = await fetch(`${BASE}/api/medicalrecords/pet/${petId}`, {
+      const response = await fetch(`${BASE}/medicalrecords/pet/${petId}`, {
         method: 'GET',
         headers: getAuthHeaders()
       });
@@ -68,7 +68,7 @@ export const medicalRecordsApi = {
   // Create a new medical record
   async createMedicalRecord(request: CreateMedicalRecordRequest): Promise<ApiResponse<MedicalRecord>> {
     try {
-      const response = await fetch(`${BASE}/api/medicalrecords`, {
+      const response = await fetch(`${BASE}/medicalrecords`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(request)
@@ -99,7 +99,7 @@ export const vaccinationsApi = {
   // Get vaccination report for a pet
   async getVaccinationReport(petId: string): Promise<ApiResponse<VaccinationReport>> {
     try {
-      const response = await fetch(`${BASE}/api/vaccinations/pet/${petId}/report`, {
+      const response = await fetch(`${BASE}/vaccinations/pet/${petId}/report`, {
         method: 'GET',
         headers: getAuthHeaders()
       });
@@ -125,7 +125,7 @@ export const vaccinationsApi = {
   // Create a new vaccination record
   async createVaccination(request: CreateVaccinationRequest): Promise<ApiResponse<Vaccination>> {
     try {
-      const response = await fetch(`${BASE}/api/vaccinations`, {
+      const response = await fetch(`${BASE}/vaccinations`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(request)
@@ -156,7 +156,7 @@ export const treatmentsApi = {
   // Get treatment history report for a pet
   async getTreatmentHistoryReport(petId: string): Promise<ApiResponse<TreatmentHistoryReport>> {
     try {
-      const response = await fetch(`${BASE}/api/treatments/pet/${petId}/history`, {
+      const response = await fetch(`${BASE}/treatments/pet/${petId}/history`, {
         method: 'GET',
         headers: getAuthHeaders()
       });
@@ -182,7 +182,7 @@ export const treatmentsApi = {
   // Create a new treatment record
   async createTreatment(request: CreateTreatmentRequest): Promise<ApiResponse<Treatment>> {
     try {
-      const response = await fetch(`${BASE}/api/treatments`, {
+      const response = await fetch(`${BASE}/treatments`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(request)
@@ -213,7 +213,7 @@ export const prescriptionsApi = {
   // Create a new prescription
   async createPrescription(request: CreatePrescriptionRequest): Promise<ApiResponse<Prescription>> {
     try {
-      const response = await fetch(`${BASE}/api/prescriptions`, {
+      const response = await fetch(`${BASE}/prescriptions`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(request)
