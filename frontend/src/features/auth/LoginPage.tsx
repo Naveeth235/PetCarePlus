@@ -110,8 +110,12 @@ function LoginPage() {
       const rawRole = res.data.user?.role ?? "";
       const role = String(rawRole).toUpperCase();
 
-      // one-time log to verify
-      console.log("login user.role =", rawRole);
+      // Enhanced debugging
+      console.log("🔐 Login Debug:");
+      console.log("- Raw role from API:", rawRole);
+      console.log("- Processed role:", role);
+      console.log("- Stored in localStorage:", localStorage.getItem("APP_ROLE"));
+      console.log("- Full user object:", res.data.user);
 
       if (role === "ADMIN") {
         window.location.assign("/admin");
