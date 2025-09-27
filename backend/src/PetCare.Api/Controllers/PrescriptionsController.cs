@@ -23,7 +23,7 @@ public class PrescriptionsController : ControllerBase
     /// Create a new prescription (Vets and Admins only)
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "Vet,Admin")]
+    [Authorize(Roles = "VET,ADMIN")]
     [ProducesResponseType(typeof(PrescriptionDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -70,7 +70,7 @@ public class PrescriptionsController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(PrescriptionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PrescriptionDto>> GetPrescription(Guid id)
+    public ActionResult<PrescriptionDto> GetPrescription(Guid id)
     {
         // This would be implemented later with a GetPrescriptionByIdQuery
         return NotFound("Prescription retrieval not yet implemented");

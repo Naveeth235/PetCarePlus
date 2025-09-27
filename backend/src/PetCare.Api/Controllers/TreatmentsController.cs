@@ -24,7 +24,7 @@ public class TreatmentsController : ControllerBase
     /// Create a new treatment record (Vets and Admins only)
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "Vet,Admin")]
+    [Authorize(Roles = "VET,ADMIN")]
     [ProducesResponseType(typeof(TreatmentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -79,7 +79,7 @@ public class TreatmentsController : ControllerBase
             return Unauthorized();
         }
 
-        var isOwner = User.IsInRole("Owner") && !User.IsInRole("Admin") && !User.IsInRole("Vet");
+        var isOwner = User.IsInRole("OWNER") && !User.IsInRole("ADMIN") && !User.IsInRole("VET");
 
         var query = new GetTreatmentHistoryReportQuery(petId, currentUserId, isOwner);
 

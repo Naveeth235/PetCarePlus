@@ -24,7 +24,7 @@ public class VaccinationsController : ControllerBase
     /// Create a new vaccination record (Vets and Admins only)
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "Vet,Admin")]
+    [Authorize(Roles = "VET,ADMIN")]
     [ProducesResponseType(typeof(VaccinationDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -77,7 +77,7 @@ public class VaccinationsController : ControllerBase
             return Unauthorized();
         }
 
-        var isOwner = User.IsInRole("Owner") && !User.IsInRole("Admin") && !User.IsInRole("Vet");
+        var isOwner = User.IsInRole("OWNER") && !User.IsInRole("ADMIN") && !User.IsInRole("VET");
 
         var query = new GetVaccinationReportQuery(petId, currentUserId, isOwner);
 
