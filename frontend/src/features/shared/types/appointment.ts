@@ -7,18 +7,21 @@ export interface Appointment {
   id: string;
   petId: string;
   petName: string;
-  ownerId: string;
+  ownerUserId: string;
   ownerName: string;
-  vetId?: string;
+  vetUserId?: string;
   vetName?: string;
   requestedDateTime: string;
   actualDateTime?: string;
   reasonForVisit: string;
   notes?: string;
   adminNotes?: string;
-  status: 'pending' | 'approved' | 'cancelled' | 'completed';
+  status: 'Pending' | 'Approved' | 'Cancelled' | 'Completed' | 'NoShow';
+  statusDisplayName: string;
   createdAt: string;
   updatedAt?: string;
+  canBeCancelled: boolean;
+  requiresAction: boolean;
 }
 
 export interface AppointmentSummary {
@@ -38,7 +41,7 @@ export interface CreateAppointmentRequest {
 }
 
 export interface UpdateAppointmentStatusRequest {
-  status: 'approved' | 'cancelled';
+  status: 'Approved' | 'Cancelled';
   adminNotes?: string;
-  vetId?: string;
+  vetUserId?: string;
 }

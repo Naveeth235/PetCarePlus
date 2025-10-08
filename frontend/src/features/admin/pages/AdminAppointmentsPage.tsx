@@ -39,7 +39,7 @@ export const AdminAppointmentsPage: React.FC = () => {
     try {
       setProcessingId(appointmentId);
       await appointmentsApi.updateStatus(appointmentId, {
-        status: 'approved',
+        status: 'Approved',
         adminNotes: 'Appointment approved by admin'
       });
       
@@ -61,7 +61,7 @@ export const AdminAppointmentsPage: React.FC = () => {
     try {
       setProcessingId(appointmentId);
       await appointmentsApi.updateStatus(appointmentId, {
-        status: 'cancelled',
+        status: 'Cancelled',
         adminNotes: reason || 'Appointment cancelled by admin'
       });
       

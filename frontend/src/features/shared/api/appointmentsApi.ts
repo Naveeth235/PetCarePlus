@@ -4,6 +4,7 @@
 // Integration: Works with backend /api/appointments/* endpoints, includes TypeScript typing and token authentication
 
 import { getToken } from '../../auth/token';
+import type { Appointment, CreateAppointmentRequest, UpdateAppointmentStatusRequest } from '../types/appointment';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const API_BASE = `${API_BASE_URL}/appointments`;
@@ -31,70 +32,57 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   return response.json();
 };
 
-export interface CreateAppointmentRequest {
-  petId: string;
-  requestedDateTime: string;
-  reasonForVisit: string;
-  notes?: string;
-}
-
-export interface UpdateAppointmentStatusRequest {
-  status: 'approved' | 'cancelled';
-  adminNotes?: string;
-  vetId?: string;
-}
-
 export const appointmentsApi = {
   // Sprint Feature: Owner endpoints for appointment management
   // Owner endpoints
-  create: async (data: CreateAppointmentRequest) => {
+  create: async (data: CreateAppointmentRequest): Promise<Appointment> => {
     const response = await fetch(API_BASE, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    return handleResponse(response);
+    return handleResponse<Appointment>(response);
   },
 
-  getMy: async () => {
+  getMy: async (): Promise<Appointment[]> => {
     const response = await fetch(`${API_BASE}/my`, {
       headers: getAuthHeaders()
     });
-    return handleResponse(response);
+    return handleResponse<Appointment[]>(response);
   },
 
   // Sprint Feature: Admin endpoints for appointment approval/rejection
   // Admin endpoints
-  getAll: async () => {
+  getAll: async (): Promise<Appointment[]> => {
     const response = await fetch(API_BASE, {
       headers: getAuthHeaders()
     });
-    return handleResponse(response);
+    return handleResponse<Appointment[]>(response);
   },
 
-  getPending: async () => {
+  getPending: async (): Promise<Appointment[]> => {
     const response = await fetch(`${API_BASE}/pending`, {
       headers: getAuthHeaders()
     });
-    return handleResponse(response);
+    return handleResponse<Appointment[]>(response);
   },
 
   // Sprint Key Feature: Update appointment status (approve/reject) with admin notes
-  updateStatus: async (appointmentId: string, data: UpdateAppointmentStatusRequest) => {
+  updateStatus: async (appointmentId: string, data: UpdateAppointmentStatusRequest): Promise<Appointment> => {
     const response = await fetch(`${API_BASE}/${appointmentId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    return handleResponse(response);
+    return handleResponse<Appointment>(response);
   },
 
   // Future Enhancement: Vet endpoints for assigned appointments
   // Vet endpoints
-  getMyAssigned: async () => {
+  getMyAssigned: async (): Promise<Appointment[]> => {
     const response = await fetch(`${API_BASE}/assigned`, {
       headers: getAuthHeaders()
     });
-    return handleResponse(response);
+    return handleResponse<Appointment[]>(response);
   }
 };
