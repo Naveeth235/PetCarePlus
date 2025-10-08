@@ -1,6 +1,21 @@
+// OwnerPage.tsx - Updated for Sprint
+// Purpose: Owner dashboard with functional navigation cards and notification badges
+// Key Changes: Added Links (not divs), notification badge on "My Appointments", state for pending count
+// Features: Visual notification badges, responsive grid, connected to new appointment routes
+
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const OwnerPage = () => {
+  // Mock state for notification badges - will be replaced with real API data
+  const [pendingAppointments, setPendingAppointments] = useState(0);
+
+  useEffect(() => {
+    // TODO: Replace with real API calls to get appointment counts
+    // This will integrate with appointmentsApi.getMy() to count pending appointments
+    setPendingAppointments(2); // Mock pending appointments
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -24,6 +39,7 @@ const OwnerPage = () => {
             View and manage your pets
           </p>
         </Link>
+        
         <Link
           to="/owner/pets"
           className="block bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-500 hover:shadow-lg transition-shadow focus-visible:ring focus-visible:ring-blue-500"
@@ -33,18 +49,36 @@ const OwnerPage = () => {
             View your pets' medical records and vaccination history
           </p>
         </Link>
-        <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-purple-500 hover:shadow-lg transition-shadow">
+
+        {/* Sprint Addition: Changed from div to Link for functional navigation */}
+        <Link
+          to="/owner/appointments/request"
+          className="block bg-white rounded-xl shadow-md p-6 border-t-4 border-purple-500 hover:shadow-lg transition-shadow focus-visible:ring focus-visible:ring-purple-500"
+        >
           <h2 className="text-lg font-semibold text-gray-800 mb-2">Request Appointment</h2>
           <p className="text-sm text-gray-600">
             Book your next visit easily
           </p>
-        </div>
-        <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-orange-500 hover:shadow-lg transition-shadow">
+        </Link>
+
+        {/* Sprint Addition: Added notification badge and Link functionality */}
+        <Link
+          to="/owner/appointments"
+          className="block bg-white rounded-xl shadow-md p-6 border-t-4 border-orange-500 hover:shadow-lg transition-shadow focus-visible:ring focus-visible:ring-orange-500 relative"
+        >
           <h2 className="text-lg font-semibold text-gray-800 mb-2">My Appointments</h2>
           <p className="text-sm text-gray-600">
             Track upcoming and past bookings
           </p>
-        </div>
+          {/* Sprint Feature: Notification badge shows pending appointment count */}
+          {pendingAppointments > 0 && (
+            <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 flex items-center justify-center">
+              <span className="text-xs font-medium text-white">
+                {pendingAppointments > 9 ? '9+' : pendingAppointments}
+              </span>
+            </div>
+          )}
+        </Link>
       </div>
 
       {/* Footer link */}

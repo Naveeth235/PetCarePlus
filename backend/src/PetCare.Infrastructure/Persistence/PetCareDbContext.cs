@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PetCare.Domain.Pets;
 using PetCare.Domain.MedicalRecords;
+using PetCare.Domain.Appointments; // Sprint Addition: Appointment entities
+using PetCare.Domain.Notifications; // Sprint Addition: Notification entities
 using PetCare.Infrastructure.Auth;
 
 namespace PetCare.Infrastructure.Persistence;
@@ -15,6 +17,10 @@ public class PetCareDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Vaccination> Vaccinations => Set<Vaccination>();
     public DbSet<Treatment> Treatments => Set<Treatment>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
+    
+    // Sprint Addition: Appointment and Notification DbSets
+    public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -152,6 +158,63 @@ public class PetCareDbContext : IdentityDbContext<ApplicationUser>
                 .WithMany()
                 .HasForeignKey(p => p.VetUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Sprint Addition: Appointment entity configuration
+        builder.Entity<Appointment>(b =>
+        {
+            b.Property(a => a.ReasonForVisit).HasMaxLength(200).IsRequired();
+            b.Property(a => a.Notes).HasMaxLength(1000);
+            b.Property(a => a.AdminNotes).HasMaxLength(1000);
+            b.Property(a => a.Status).HasConversion<int>().IsRequired();
+            b.Property(a => a.CreatedAt).IsRequired();
+
+            // Pet FK (Guid) - following existing pattern
+            b.HasIndex(a => a.PetId);
+            b.HasOne(a => a.Pet)
+                .WithMany(p => p.Appointments)
+                .HasForeignKey(a => a.PetId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Owner FK (string) - following existing pattern
+            b.HasIndex(a => a.OwnerUserId);
+            b.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(a => a.OwnerUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Vet FK (string, optional) - following existing pattern
+            b.HasIndex(a => a.VetUserId);
+            b.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(a => a.VetUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Indexes for common queries
+            b.HasIndex(a => a.Status);
+            b.HasIndex(a => a.RequestedDateTime);
+            b.HasIndex(a => new { a.OwnerUserId, a.Status }); // Owner's appointments by status
+        });
+
+        // Sprint Addition: Notification entity configuration
+        builder.Entity<Notification>(b =>
+        {
+            b.Property(n => n.Title).HasMaxLength(200).IsRequired();
+            b.Property(n => n.Message).HasMaxLength(1000).IsRequired();
+            b.Property(n => n.Data).HasMaxLength(2000); // JSON data
+            b.Property(n => n.Type).HasConversion<int>().IsRequired();
+            b.Property(n => n.CreatedAt).IsRequired();
+
+            // User FK (string) - following existing pattern
+            b.HasIndex(n => n.UserId);
+            b.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes for common queries
+            b.HasIndex(n => new { n.UserId, n.IsRead }); // User's unread notifications
+            b.HasIndex(n => n.CreatedAt); // Recent notifications
         });
     }
 }
