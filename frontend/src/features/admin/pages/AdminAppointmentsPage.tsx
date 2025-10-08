@@ -1,8 +1,3 @@
-// AdminAppointmentsPage.tsx
-// Purpose: Admin interface to manage all appointment requests with approve/reject functionality
-// Features: Filter tabs, approve/reject buttons with loading states, admin notes, real-time status updates
-// Route: /admin/appointments - "As an admin, I want to approve or reject appointment requests"
-
 import React, { useState, useEffect } from "react";
 import { appointmentsApi } from "../../shared/api/appointmentsApi";
 import type { Appointment } from "../../shared/types/appointment";
@@ -11,7 +6,9 @@ export const AdminAppointmentsPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'cancelled'>('pending');
+  const [filter, setFilter] = useState<
+    "all" | "pending" | "approved" | "cancelled"
+  >("pending");
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,9 +19,10 @@ export const AdminAppointmentsPage: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = filter === 'pending' 
-        ? await appointmentsApi.getPending()
-        : await appointmentsApi.getAll();
+      const data =
+        filter === "pending"
+          ? await appointmentsApi.getPending()
+          : await appointmentsApi.getAll();
       setAppointments(data as Appointment[]);
     } catch (error) {
       console.error("Failed to load appointments:", error);
@@ -34,45 +32,35 @@ export const AdminAppointmentsPage: React.FC = () => {
     }
   };
 
-  // Sprint Feature: Handle appointment approval with admin notes and notification triggering
   const handleApprove = async (appointmentId: string) => {
     try {
       setProcessingId(appointmentId);
       await appointmentsApi.updateStatus(appointmentId, {
-        status: 'Approved',
-        adminNotes: 'Appointment approved by admin'
+        status: "Approved",
+        adminNotes: "Appointment approved by admin",
       });
-      
-      // Remove from pending list or reload data
       await loadAppointments();
-      
-      // Show success message
-      alert('Appointment approved successfully! Owner will be notified.');
+      alert("Appointment approved successfully! Owner will be notified.");
     } catch (error) {
       console.error("Failed to approve appointment:", error);
-      alert('Failed to approve appointment. Please try again.');
+      alert("Failed to approve appointment. Please try again.");
     } finally {
       setProcessingId(null);
     }
   };
 
-  // Sprint Feature: Handle appointment rejection with reason and notification triggering
   const handleReject = async (appointmentId: string, reason?: string) => {
     try {
       setProcessingId(appointmentId);
       await appointmentsApi.updateStatus(appointmentId, {
-        status: 'Cancelled',
-        adminNotes: reason || 'Appointment cancelled by admin'
+        status: "Cancelled",
+        adminNotes: reason || "Appointment cancelled by admin",
       });
-      
-      // Remove from pending list or reload data
       await loadAppointments();
-      
-      // Show success message
-      alert('Appointment rejected successfully! Owner will be notified.');
+      alert("Appointment rejected successfully! Owner will be notified.");
     } catch (error) {
       console.error("Failed to reject appointment:", error);
-      alert('Failed to reject appointment. Please try again.');
+      alert("Failed to reject appointment. Please try again.");
     } finally {
       setProcessingId(null);
     }
@@ -80,22 +68,27 @@ export const AdminAppointmentsPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "approved":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
-  const filteredAppointments = appointments.filter(appointment => {
-    if (filter === 'all') return true;
-    return appointment.status.toLowerCase() === filter;
-  });
+  const filteredAppointments = appointments.filter((a) =>
+    filter === "all" ? true : a.status.toLowerCase() === filter
+  );
 
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-lg text-slate-600">Loading appointments...</div>
+        <div className="text-lg text-slate-600 animate-pulse">
+          Loading appointments...
+        </div>
       </div>
     );
   }
@@ -114,32 +107,31 @@ export const AdminAppointmentsPage: React.FC = () => {
 
       {/* Filter Tabs */}
       <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
-        {[
-          { key: 'pending', label: 'Pending' },
-          { key: 'approved', label: 'Approved' },
-          { key: 'cancelled', label: 'Cancelled' },
-          { key: 'all', label: 'All' }
-        ].map((tab) => (
+        {["pending", "approved", "cancelled", "all"].map((tab) => (
           <button
-            key={tab.key}
-            onClick={() => setFilter(tab.key as any)}
+            key={tab}
+            onClick={() => setFilter(tab as any)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              filter === tab.key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              filter === tab
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
-            {tab.label}
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
             <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-gray-600 bg-gray-200 rounded-full">
-              {appointments.filter(a => tab.key === 'all' ? true : a.status.toLowerCase() === tab.key).length}
+              {
+                appointments.filter((a) =>
+                  tab === "all" ? true : a.status.toLowerCase() === tab
+                ).length
+              }
             </span>
           </button>
         ))}
       </div>
 
-      {/* Error State */}
+      {/* Error */}
       {error && (
-        <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200">
+        <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200 animate-fadeIn">
           <p>{error}</p>
           <button
             onClick={loadAppointments}
@@ -150,100 +142,103 @@ export const AdminAppointmentsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Appointments List */}
+      {/* Appointment List */}
       {filteredAppointments.length > 0 ? (
         <div className="space-y-4">
           {filteredAppointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500"
+              className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 transition transform hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-4">
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center space-x-3">
                     <h3 className="text-lg font-semibold text-slate-800">
                       {appointment.petName} - {appointment.ownerName}
                     </h3>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(appointment.status)}`}>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                        appointment.status
+                      )}`}
+                    >
                       {appointment.status}
                     </span>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                     <div>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Requested Date:</span> {new Date(appointment.requestedDateTime).toLocaleDateString()}
+                      <p>
+                        <span className="font-medium">Requested Date:</span>{" "}
+                        {new Date(
+                          appointment.requestedDateTime
+                        ).toLocaleDateString()}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Requested Time:</span> {new Date(appointment.requestedDateTime).toLocaleTimeString()}
+                      <p>
+                        <span className="font-medium">Requested Time:</span>{" "}
+                        {new Date(
+                          appointment.requestedDateTime
+                        ).toLocaleTimeString()}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Reason:</span> {appointment.reasonForVisit}
+                      <p>
+                        <span className="font-medium">Reason:</span>{" "}
+                        {appointment.reasonForVisit}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Owner:</span> {appointment.ownerName}
+                      <p>
+                        <span className="font-medium">Owner:</span>{" "}
+                        {appointment.ownerName}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Pet:</span> {appointment.petName}
+                      <p>
+                        <span className="font-medium">Pet:</span>{" "}
+                        {appointment.petName}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Requested:</span> {new Date(appointment.createdAt).toLocaleDateString()}
+                      <p>
+                        <span className="font-medium">Requested:</span>{" "}
+                        {new Date(appointment.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
                   {appointment.notes && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700">
-                        <span className="font-medium">Owner Notes:</span> {appointment.notes}
-                      </p>
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+                      <span className="font-medium">Owner Notes:</span>{" "}
+                      {appointment.notes}
                     </div>
                   )}
 
                   {appointment.adminNotes && (
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-gray-700">
-                        <span className="font-medium">Admin Notes:</span> {appointment.adminNotes}
-                      </p>
+                    <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm text-gray-700">
+                      <span className="font-medium">Admin Notes:</span>{" "}
+                      {appointment.adminNotes}
                     </div>
                   )}
                 </div>
 
-                {/* Action Buttons - Only show for pending appointments */}
-                {appointment.status.toLowerCase() === 'pending' && (
-                  <div className="flex space-x-2 ml-4">
+                {/* Action Buttons */}
+                {appointment.status.toLowerCase() === "pending" && (
+                  <div className="flex flex-col space-y-2 ml-4">
                     <button
                       onClick={() => handleApprove(appointment.id)}
                       disabled={processingId === appointment.id}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {processingId === appointment.id ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          ✅ Approve
-                        </>
-                      )}
+                      {processingId === appointment.id
+                        ? "Processing..."
+                        : " Approve"}
                     </button>
                     <button
                       onClick={() => {
-                        const reason = prompt('Reason for rejection (optional):');
-                        if (reason !== null) { // User didn't cancel
+                        const reason = prompt(
+                          "Reason for rejection (optional):"
+                        );
+                        if (reason !== null)
                           handleReject(appointment.id, reason);
-                        }
                       }}
                       disabled={processingId === appointment.id}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      ❌ Reject
+                      Reject
                     </button>
                   </div>
                 )}
@@ -255,14 +250,15 @@ export const AdminAppointmentsPage: React.FC = () => {
         <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
           <div className="mb-3 text-6xl text-slate-400">📅</div>
           <p className="text-lg text-slate-600">
-            {filter === 'pending' 
+            {filter === "pending"
               ? "No pending appointment requests."
-              : `No ${filter} appointments found.`
-            }
+              : `No ${filter} appointments found.`}
           </p>
-          <p className="text-slate-500">
-            {filter === 'pending' && "New requests will appear here when owners submit them."}
-          </p>
+          {filter === "pending" && (
+            <p className="text-slate-500 mt-1">
+              New requests will appear here when owners submit them.
+            </p>
+          )}
         </div>
       )}
     </div>
