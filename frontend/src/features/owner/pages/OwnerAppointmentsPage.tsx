@@ -41,13 +41,13 @@ export const OwnerAppointmentsPage: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
-        return "bg-yellow-50 text-yellow-800 border-yellow-200";
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "approved":
-        return "bg-green-50 text-green-800 border-green-200";
+        return "bg-green-100 text-green-800 border-green-200";
       case "cancelled":
-        return "bg-red-50 text-red-800 border-red-200";
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-50 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -75,21 +75,21 @@ export const OwnerAppointmentsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-800">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-800">
             My Appointments
           </h1>
-          <p className="mt-1 text-slate-600 text-sm sm:text-base">
+          <p className="mt-2 text-slate-600">
             Track your upcoming and past appointments
           </p>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 bg-slate-50 rounded-xl p-2 shadow-sm">
+      <div className="flex space-x-1 bg-gray-100 rounded-xl p-1">
         {[
           { key: "all", label: "All" },
           { key: "pending", label: "Pending" },
@@ -99,15 +99,15 @@ export const OwnerAppointmentsPage: React.FC = () => {
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key as any)}
-            className={`px-4 py-2 rounded-2xl text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               filter === tab.key
-                ? "bg-white text-slate-900 shadow"
-                : "text-slate-600 hover:text-slate-900 hover:bg-white"
+                ? "bg-white text-gray-900 shadow-sm transform scale-105"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
             }`}
           >
             {tab.label}
             {tab.key !== "all" && (
-              <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-slate-700 bg-slate-200 rounded-full">
+              <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-gray-600 bg-gray-200 rounded-full">
                 {
                   appointments.filter((a) => a.status.toLowerCase() === tab.key)
                     .length
@@ -118,9 +118,9 @@ export const OwnerAppointmentsPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Error State */}
+      {/* Error */}
       {error && (
-        <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200">
+        <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200 animate-fadeIn">
           <p>{error}</p>
           <button
             onClick={loadMyAppointments}
@@ -133,23 +133,21 @@ export const OwnerAppointmentsPage: React.FC = () => {
 
       {/* Appointments List */}
       {filteredAppointments.length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {filteredAppointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="bg-white rounded-3xl shadow-sm p-6 border-l-4 border-indigo-600 hover:shadow-lg transition-shadow"
+              className="bg-white rounded-3xl shadow-md p-6 border-l-4 border-blue-500 transition-shadow hover:shadow-lg"
             >
               <div className="flex justify-between items-start">
-                <div className="flex-1 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">
-                        {getStatusIcon(appointment.status)}
-                      </span>
-                      <h3 className="text-lg font-semibold text-slate-800">
-                        Appointment for {appointment.petName}
-                      </h3>
-                    </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <span className="text-2xl">
+                      {getStatusIcon(appointment.status)}
+                    </span>
+                    <h3 className="text-lg font-semibold text-slate-800">
+                      Appointment for {appointment.petName}
+                    </h3>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
                         appointment.status
@@ -159,35 +157,35 @@ export const OwnerAppointmentsPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
-                    <div className="space-y-1">
-                      <p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <p className="text-sm text-gray-600">
                         <span className="font-medium">Date:</span>{" "}
                         {new Date(
                           appointment.requestedDateTime
                         ).toLocaleDateString()}
                       </p>
-                      <p>
+                      <p className="text-sm text-gray-600">
                         <span className="font-medium">Time:</span>{" "}
                         {new Date(
                           appointment.requestedDateTime
                         ).toLocaleTimeString()}
                       </p>
                       {appointment.vetName && (
-                        <p>
+                        <p className="text-sm text-gray-600">
                           <span className="font-medium">Veterinarian:</span>{" "}
                           {appointment.vetName}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-1">
+                    <div>
                       {appointment.reasonForVisit && (
-                        <p>
+                        <p className="text-sm text-gray-600">
                           <span className="font-medium">Reason:</span>{" "}
                           {appointment.reasonForVisit}
                         </p>
                       )}
-                      <p>
+                      <p className="text-sm text-gray-600">
                         <span className="font-medium">Requested:</span>{" "}
                         {new Date(appointment.createdAt).toLocaleDateString()}
                       </p>
@@ -195,8 +193,8 @@ export const OwnerAppointmentsPage: React.FC = () => {
                   </div>
 
                   {appointment.adminNotes && (
-                    <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                      <p className="text-sm text-slate-700">
+                    <div className="mt-4 p-3 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-700">
                         <span className="font-medium">Admin Notes:</span>{" "}
                         {appointment.adminNotes}
                       </p>
@@ -208,14 +206,14 @@ export const OwnerAppointmentsPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
-          <div className="mb-3 text-6xl text-slate-400">📅</div>
+        <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200 shadow-md">
+          <div className="mb-3 text-6xl text-slate-400 animate-pulse">📅</div>
           <p className="text-lg text-slate-600">
             {filter === "all"
               ? "You don't have any appointments yet."
               : `No ${filter} appointments found.`}
           </p>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 mt-2">
             {filter === "all" &&
               "Request your first appointment to get started."}
           </p>
