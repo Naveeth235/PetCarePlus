@@ -5,16 +5,40 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { appointmentsApi } from "../shared/api/appointmentsApi";
 
 const OwnerPage = () => {
-  // Mock state for notification badges - will be replaced with real API data
+  // Real state for notification badges - integrated with appointments API
   const [pendingAppointments, setPendingAppointments] = useState(0);
 
   useEffect(() => {
-    // TODO: Replace with real API calls to get appointment counts
-    // This will integrate with appointmentsApi.getMy() to count pending appointments
-    setPendingAppointments(2); // Mock pending appointments
+    loadPendingAppointmentCount();
+    
+    // Optional: Refresh count when page becomes visible (user returns from other tabs)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadPendingAppointmentCount();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
+
+  const loadPendingAppointmentCount = async () => {
+    try {
+      // Fetch user's appointments and count pending ones
+      const appointments = await appointmentsApi.getMy();
+      const pendingCount = appointments.filter(
+        appointment => appointment.status.toLowerCase() === 'pending'
+      ).length;
+      setPendingAppointments(pendingCount);
+    } catch (error) {
+      console.error("Failed to load appointment count:", error);
+      // On error, don't show badge (keep count at 0)
+      setPendingAppointments(0);
+    }
+  };
 
   return (
     <div className="space-y-6">
