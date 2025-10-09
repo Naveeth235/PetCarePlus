@@ -184,8 +184,20 @@ test.describe('Sprint 3: Complete Appointment Flow E2E Test', () => {
     
     // Step 2.5: Approve the appointment
     try {
-      const approveButton = appointmentCard.locator('button:has-text("Approve"), input[type="button"][value*="Approve"], [data-testid="approve-button"]');
-      if (await approveButton.isVisible({ timeout: 3000 })) {
+      // Try to find the approve button more specifically - first try the exact green button
+      let approveButton = appointmentCard.locator('button.bg-green-600:has-text("✅ Approve")');
+      
+      // If that doesn't work, try any approve button within the appointment card
+      if (await approveButton.count() === 0) {
+        approveButton = appointmentCard.locator('button:has-text("Approve")').first();
+      }
+      
+      // If still no button found, try input buttons
+      if (await approveButton.count() === 0) {
+        approveButton = appointmentCard.locator('input[type="button"][value*="Approve"]').first();
+      }
+      
+      if (await approveButton.count() > 0 && await approveButton.isVisible({ timeout: 2000 })) {
         await approveButton.click();
         console.log('🚀 Clicked approve button');
         
