@@ -37,15 +37,15 @@ $testSuites = @(
         Name = "API Tests"
         Description = "REST API controllers and HTTP endpoints"
         Path = "tests/PetCare.Api.Tests/PetCare.Api.Tests.csproj"
-        Filter = "Appointments"
+        Filter = "AppointmentsController"
         Icon = ""
         Color = "#FF5722"
     },
     @{
         Name = "Integration Tests"
         Description = "End-to-end integration tests"
-        Path = "tests/PetCare.Integration.Tests"
-        Filter = ""
+        Path = "tests/PetCare.Integration.Tests/PetCare.Integration.Tests.csproj"
+        Filter = "Appointments"
         Icon = ""
         Color = "#FF9800"
     }
