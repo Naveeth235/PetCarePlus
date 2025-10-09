@@ -1,4 +1,4 @@
-x# Test Runner for PetCare Appointment Booking Feature
+# Test Runner for PetCare Appointment Booking Feature
 # This script runs all unit tests and integration tests for the appointment booking functionality
 
 Write-Host "🧪 Running PetCare Appointment Booking Tests" -ForegroundColor Cyan

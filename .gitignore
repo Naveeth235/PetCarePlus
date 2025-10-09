@@ -95,3 +95,9 @@ obj/
 petcare-test-report.html
 petcare-test-report.json
 
+# Playwright test results and reports
+playwright-report/
+test-results/
+**/test-results/
+**/playwright-report/
+

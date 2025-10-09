@@ -14,8 +14,9 @@ I have successfully created a comprehensive test suite for the **PetCare Appoint
 | **Infrastructure Tests** | `NotificationServiceTests.cs` | 15 tests | ✅ **PASSING** |
 | **API Tests** | `AppointmentsControllerTests.cs` | 25 tests | ✅ **PASSING** |
 | **Integration Tests** | `AppointmentsIntegrationTests.cs` | 12 tests | ✅ **READY** |
+| **E2E Tests** | `sprint3-appointment-flow.spec.ts` | 3 tests | ✅ **PASSING** |
 
-**Total Tests Created: 152+ individual test methods**
+**Total Tests Created: 155+ individual test methods**
 
 ## 🏗️ Test Architecture
 
