@@ -93,7 +93,7 @@ public class AppointmentsController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var appointments = await _appointmentRepository.GetByOwnerUserIdAsync(userId);
         
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        var dtos = await MapToDtosAsync(appointments);
         return Ok(dtos);
     }
 
@@ -103,7 +103,7 @@ public class AppointmentsController : ControllerBase
     public async Task<IActionResult> GetAllAppointments()
     {
         var appointments = await _appointmentRepository.GetAllAsync();
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        var dtos = await MapToDtosAsync(appointments);
         return Ok(dtos);
     }
 
@@ -113,7 +113,7 @@ public class AppointmentsController : ControllerBase
     public async Task<IActionResult> GetPendingAppointments()
     {
         var appointments = await _appointmentRepository.GetPendingAsync();
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        var dtos = await MapToDtosAsync(appointments);
         return Ok(dtos);
     }
 
@@ -180,8 +180,58 @@ public class AppointmentsController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var appointments = await _appointmentRepository.GetByVetUserIdAsync(userId);
         
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        var dtos = await MapToDtosAsync(appointments);
         return Ok(dtos);
+    }
+
+    // Safe batch mapping method to avoid DbContext concurrency issues
+    private async Task<List<AppointmentDto>> MapToDtosAsync(IEnumerable<Appointment> appointments)
+    {
+        var appointmentList = appointments.ToList();
+        if (!appointmentList.Any()) return new List<AppointmentDto>();
+
+        // Get all unique user IDs to batch lookup users
+        var allUserIds = appointmentList
+            .SelectMany(a => new[] { a.OwnerUserId, a.VetUserId })
+            .Where(id => !string.IsNullOrEmpty(id))
+            .Distinct()
+            .ToList();
+
+        // Batch lookup all users at once to avoid concurrency issues
+        var userLookupTasks = allUserIds.Select(async id => 
+            new { Id = id, User = await _userManager.FindByIdAsync(id!) });
+        var userResults = await Task.WhenAll(userLookupTasks);
+        var userDict = userResults.Where(x => x.Id != null)
+            .ToDictionary(x => x.Id!, x => x.User);
+
+        // Map appointments to DTOs using the cached user data
+        return appointmentList.Select(appointment =>
+        {
+            userDict.TryGetValue(appointment.OwnerUserId, out var owner);
+            userDict.TryGetValue(appointment.VetUserId ?? "", out var vet);
+
+            return new AppointmentDto
+            {
+                Id = appointment.Id,
+                PetId = appointment.PetId,
+                PetName = appointment.Pet?.Name ?? "Unknown Pet",
+                OwnerUserId = appointment.OwnerUserId,
+                OwnerName = owner?.FullName ?? "Unknown Owner",
+                VetUserId = appointment.VetUserId,
+                VetName = vet?.FullName,
+                RequestedDateTime = appointment.RequestedDateTime,
+                ActualDateTime = appointment.ActualDateTime,
+                ReasonForVisit = appointment.ReasonForVisit,
+                Notes = appointment.Notes,
+                AdminNotes = appointment.AdminNotes,
+                Status = appointment.Status,
+                StatusDisplayName = appointment.StatusDisplayName,
+                CreatedAt = appointment.CreatedAt,
+                UpdatedAt = appointment.UpdatedAt,
+                CanBeCancelled = appointment.CanBeCancelled,
+                RequiresAction = appointment.RequiresAction
+            };
+        }).ToList();
     }
 
     // Helper method to map domain entity to DTO with user names
