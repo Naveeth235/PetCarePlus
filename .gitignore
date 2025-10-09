@@ -86,3 +86,12 @@ docker-compose.override.yml
 bin/
 obj/
 
+# -----------------------
+# Test Reports (Generated)
+# -----------------------
+# Generated test report files - these are created by generate-test-report.ps1
+*test-report.html
+*test-report.json
+petcare-test-report.html
+petcare-test-report.json
+

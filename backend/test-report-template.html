@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare Test Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6fa; padding: 20px; color: #2c3e50; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: #34495e; color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
+        .header .subtitle { opacity: 0.9; font-size: 0.95rem; }
+        .stats-container { padding: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { text-align: center; padding: 20px; background: #f8f9fb; border-radius: 8px; border: 1px solid #e1e5e9; }
+        .stat-icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
+        .stat-number { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; color: #2c3e50; }
+        .stat-label { font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
+        .success-stat .stat-number { color: #27ae60; }
+        .failure-stat .stat-number { color: #e74c3c; }
+        .rate-stat .stat-number { color: #3498db; }
+        .summary-card { background: #ecf0f1; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+        .summary-text { font-size: 1rem; color: #2c3e50; }
+        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 15px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; margin-top: 10px; }
+        .status-success { background: #d5f4e6; color: #27ae60; }
+        .status-failure { background: #fadbd8; color: #e74c3c; }
+        .suites-section { padding: 0 30px 30px; }
+        .suites-title { font-size: 1.2rem; margin-bottom: 20px; color: #2c3e50; font-weight: 600; }
+        .suite-item { background: #f8f9fb; border: 1px solid #e1e5e9; border-radius: 8px; margin-bottom: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .suite-info { display: flex; align-items: center; gap: 12px; }
+        .suite-icon { font-size: 1.2rem; }
+        .suite-details h4 { font-size: 0.9rem; color: #2c3e50; margin: 0; }
+        .suite-details p { font-size: 0.75rem; color: #7f8c8d; margin: 2px 0 0 0; }
+        .suite-stats { display: flex; gap: 15px; align-items: center; }
+        .suite-stat { text-align: center; }
+        .suite-stat-number { font-size: 0.9rem; font-weight: 600; }
+        .suite-stat-label { font-size: 0.65rem; color: #7f8c8d; text-transform: uppercase; }
+        .suite-passed .suite-stat-number { color: #27ae60; }
+        .suite-failed .suite-stat-number { color: #e74c3c; }
+        .suite-status { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+        .footer { background: #f8f9fb; padding: 15px; text-align: center; border-top: 1px solid #e1e5e9; font-size: 0.85rem; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 PetCare Test Results</h1>
+            <div class="subtitle">Test Execution Report</div>
+        </div>
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">📊</span>
+                    <div class="stat-number">{{TOTAL_TESTS}}</div>
+                    <div class="stat-label">Total Tests</div>
+                </div>
+                <div class="stat-card success-stat">
+                    <span class="stat-icon">✅</span>
+                    <div class="stat-number">{{PASSED_TESTS}}</div>
+                    <div class="stat-label">Passed</div>
+                </div>
+                <div class="stat-card failure-stat">
+                    <span class="stat-icon">❌</span>
+                    <div class="stat-number">{{FAILED_TESTS}}</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-card rate-stat">
+                    <span class="stat-icon">📈</span>
+                    <div class="stat-number">{{SUCCESS_RATE}}%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-text">
+                    ⏱️ Executed {{TOTAL_TESTS}} tests with {{SUCCESS_RATE}}% success rate in {{DURATION}}
+                </div>
+                <div class="status-badge {{STATUS_CLASS}}">
+                    {{OVERALL_STATUS}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="suites-section">
+            <h3 class="suites-title">🧪 Test Suites Details</h3>
+            {{TEST_SUITES}}
+        </div>
+        
+        <div class="footer">
+            🕒 Generated on {{TIMESTAMP}}
+        </div>
+    </div>
+</body>
+</html>

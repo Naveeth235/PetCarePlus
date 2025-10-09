@@ -1,0 +1,83 @@
+{
+  "reportConfig": {
+    "title": "PetCare Appointment Tests",
+    "subtitle": "Comprehensive Test Suite for Appointment Booking Feature",
+    "outputFileName": "petcare-test-report.html",
+    "autoRefresh": false,
+    "includeTimestamp": true,
+    "theme": {
+      "primaryColor": "#667eea",
+      "secondaryColor": "#764ba2",
+      "successColor": "#28a745",
+      "errorColor": "#dc3545",
+      "warningColor": "#ffc107"
+    }
+  },
+  "testSuites": [
+    {
+      "name": "Domain Tests",
+      "projectPath": "tests/PetCare.Domain.Tests/PetCare.Domain.Tests.csproj",
+      "filter": "Appointment",
+      "description": "Business logic, domain models, and entity validation",
+      "category": "Unit Tests",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Application Tests", 
+      "projectPath": "tests/PetCare.Application.Tests/PetCare.Application.Tests.csproj",
+      "filter": "Appointment",
+      "description": "DTOs, validation rules, and application services",
+      "category": "Unit Tests",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "name": "Infrastructure Tests",
+      "projectPath": "tests/PetCare.Infrastructure.Tests/PetCare.Infrastructure.Tests.csproj", 
+      "filter": "Notification",
+      "description": "External services and infrastructure components",
+      "category": "Unit Tests",
+      "priority": 3,
+      "enabled": true
+    },
+    {
+      "name": "API Tests",
+      "projectPath": "tests/PetCare.Api.Tests/PetCare.Api.Tests.csproj",
+      "filter": "Appointments", 
+      "description": "REST API controllers and HTTP endpoints",
+      "category": "Integration Tests",
+      "priority": 4,
+      "enabled": true
+    },
+    {
+      "name": "Integration Tests",
+      "projectPath": "tests/PetCare.Integration.Tests/PetCare.Integration.Tests.csproj",
+      "filter": "Appointments",
+      "description": "End-to-end testing with database and HTTP client", 
+      "category": "E2E Tests",
+      "priority": 5,
+      "enabled": true
+    }
+  ],
+  "reportOptions": {
+    "includeCodeCoverage": false,
+    "includeBuildInfo": true,
+    "includeEnvironmentInfo": true,
+    "generateJsonOutput": true,
+    "generateXmlOutput": false,
+    "openAfterGeneration": false
+  },
+  "notifications": {
+    "onSuccess": {
+      "enabled": false,
+      "webhook": "",
+      "email": ""
+    },
+    "onFailure": {
+      "enabled": false,
+      "webhook": "",
+      "email": ""
+    }
+  }
+}
