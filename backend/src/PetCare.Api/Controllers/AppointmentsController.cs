@@ -3,6 +3,7 @@
 // Features: Owner CRUD, Admin approve/reject, Vet assigned appointments, proper authorization
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ public class AppointmentsController : ControllerBase
         {
             return BadRequest("Appointment must be scheduled for a future date and time.");
         }
-
+        //create domain entitiy
         var appointment = new Appointment
         {
             PetId = request.PetId,
@@ -57,8 +58,9 @@ public class AppointmentsController : ControllerBase
             Notes = request.Notes,
             Status = AppointmentStatus.Pending
         };
-
+        // call infrastructure to save entity
         var created = await _appointmentRepository.CreateAsync(appointment);
+        // Map to DTO and return
         var dto = await MapToDto(created);
 
         return CreatedAtAction(nameof(GetAppointment), new { id = created.Id }, dto);
@@ -93,7 +95,14 @@ public class AppointmentsController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var appointments = await _appointmentRepository.GetByOwnerUserIdAsync(userId);
         
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        // Fixed: Process sequentially to avoid DbContext concurrency issues
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in appointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        
         return Ok(dtos);
     }
 
@@ -103,7 +112,15 @@ public class AppointmentsController : ControllerBase
     public async Task<IActionResult> GetAllAppointments()
     {
         var appointments = await _appointmentRepository.GetAllAsync();
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        
+        // Fixed: Process sequentially to avoid DbContext concurrency issues
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in appointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        
         return Ok(dtos);
     }
 
@@ -113,7 +130,15 @@ public class AppointmentsController : ControllerBase
     public async Task<IActionResult> GetPendingAppointments()
     {
         var appointments = await _appointmentRepository.GetPendingAsync();
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        
+        // Fixed: Process sequentially to avoid DbContext concurrency issues
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in appointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        
         return Ok(dtos);
     }
 
@@ -180,7 +205,14 @@ public class AppointmentsController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var appointments = await _appointmentRepository.GetByVetUserIdAsync(userId);
         
-        var dtos = await Task.WhenAll(appointments.Select(MapToDto));
+        // Fixed: Process sequentially to avoid DbContext concurrency issues
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in appointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        
         return Ok(dtos);
     }
 
