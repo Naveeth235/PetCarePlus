@@ -216,6 +216,25 @@ public class AppointmentsController : ControllerBase
         return Ok(dtos);
     }
 
+    // New Feature: Vet gets all approved appointments (for dashboard view)
+    [HttpGet("approved")]
+    [Authorize(Roles = "VET,ADMIN")]
+    public async Task<IActionResult> GetAllApprovedAppointments()
+    {
+        var appointments = await _appointmentRepository.GetAllAsync();
+        var approvedAppointments = appointments.Where(a => a.Status == AppointmentStatus.Approved);
+        
+        // Fixed: Process sequentially to avoid DbContext concurrency issues
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in approvedAppointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        
+        return Ok(dtos);
+    }
+
     // Helper method to map domain entity to DTO with user names
     private async Task<AppointmentDto> MapToDto(Appointment appointment)
     {
