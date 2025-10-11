@@ -84,5 +84,26 @@ export const appointmentsApi = {
       headers: getAuthHeaders()
     });
     return handleResponse<Appointment[]>(response);
+  },
+
+  // Vet endpoint: Get all approved appointments
+  getApproved: async (): Promise<Appointment[]> => {
+    const response = await fetch(`${API_BASE}/approved`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<Appointment[]>(response);
+  },
+
+  // Vet endpoint: Get all approved appointments (smart method with fallback)
+  getAllApprovedForVet: async (): Promise<Appointment[]> => {
+    try {
+      // Try the new approved endpoint first (VET,ADMIN access)
+      return await appointmentsApi.getApproved();
+    } catch (error) {
+      console.log('Approved endpoint failed, trying assigned appointments fallback...', error);
+      // Fallback to assigned appointments only
+      const assignedAppointments = await appointmentsApi.getMyAssigned();
+      return assignedAppointments.filter(apt => apt.status === 'Approved');
+    }
   }
 };
