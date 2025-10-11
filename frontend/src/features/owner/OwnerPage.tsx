@@ -65,10 +65,10 @@ const OwnerPage = () => {
         </Link>
         
         <Link
-          to="/owner/pets"
+          to="/owner/medical-records"
           className="block bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-500 hover:shadow-lg transition-shadow focus-visible:ring focus-visible:ring-blue-500"
         >
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Medical History</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">Medical Records</h2>
           <p className="text-sm text-gray-600">
             View your pets' medical records and vaccination history
           </p>
