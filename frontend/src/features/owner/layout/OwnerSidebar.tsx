@@ -8,7 +8,6 @@ import {
   FaUser,
   FaCalendarAlt,
   FaFileAlt,
-  FaHeart,
 } from "react-icons/fa";
 
 type Props = {
