@@ -4,6 +4,7 @@
 // Route: /owner/appointments - "As an owner, I want to track my appointment requests and their status"
 
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { appointmentsApi } from "../../shared/api/appointmentsApi";
 import type { Appointment } from "../../shared/types/appointment";
 
@@ -85,6 +86,17 @@ export const OwnerAppointmentsPage: React.FC = () => {
           <p className="mt-2 text-slate-600">
             Track your upcoming and past appointments
           </p>
+        </div>
+        <div>
+          <Link
+            to="/owner/appointments/request"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Request Appointment
+          </Link>
         </div>
       </div>
 
