@@ -23,7 +23,8 @@ import AdminUsersPage from "./features/admin/AdminUsersPage";
 import AdminUserEditPage from "./features/admin/AdminUserEditPage";
 import OwnerProfilePage from "./features/owner/OwnerProfilePage";
 import { AdminPetsPage, AdminPetAddPage, AdminPetEditPage, AdminAppointmentsPage } from "./features/admin/pages";
-import { OwnerPetsPage, OwnerAppointmentsPage, OwnerRequestAppointmentPage } from "./features/owner/pages"; // Sprint: Added appointment pages
+import { OwnerPetsPage, OwnerAppointmentsPage, OwnerRequestAppointmentPage, OwnerMedicalRecordsPage } from "./features/owner/pages"; // Sprint: Added appointment pages
+import { VetAppointmentsPage, VetProfilePage, VetTreatmentsPage } from "./features/vet/pages";
 import LandingPage from "./pages/LandingPage.tsx";
 import AdminShell from "./features/admin/layout/AdminShell";
 import VetShell from "./features/vet/layout/VetShell";
@@ -58,6 +59,7 @@ const App = () => {
           {/* Owner nested routes */}
           <Route path="pets" element={<OwnerPetsPage />} />
           <Route path="pets/:petId/medical-records" element={<PetMedicalRecordsWrapper />} />
+          <Route path="medical-records" element={<OwnerMedicalRecordsPage />} />
           <Route path="appointments" element={<OwnerAppointmentsPage />} />
           <Route path="appointments/request" element={<OwnerRequestAppointmentPage />} />
           <Route path="profile" element={<OwnerProfilePage />} />
@@ -79,6 +81,9 @@ const App = () => {
           
           {/* Vet nested routes */}
           <Route path="medical-records" element={<VetMedicalRecords />} />
+          <Route path="appointments" element={<VetAppointmentsPage />} />
+          <Route path="treatments" element={<VetTreatmentsPage />} />
+          <Route path="profile" element={<VetProfilePage />} />
         </Route>
 
         {/* Admin (parent shell + nested children) */}

@@ -4,7 +4,7 @@
 // Integration: Works with backend /api/appointments/* endpoints, includes TypeScript typing and token authentication
 
 import { getToken } from '../../auth/token';
-import type { Appointment, CreateAppointmentRequest, UpdateAppointmentStatusRequest } from '../types/appointment';
+import type { Appointment, CreateAppointmentRequest, UpdateAppointmentStatusRequest, AppointmentSummaryReport } from '../types/appointment';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const API_BASE = `${API_BASE_URL}/appointments`;
@@ -84,5 +84,34 @@ export const appointmentsApi = {
       headers: getAuthHeaders()
     });
     return handleResponse<Appointment[]>(response);
+  },
+
+  // Vet endpoint: Get all approved appointments
+  getApproved: async (): Promise<Appointment[]> => {
+    const response = await fetch(`${API_BASE}/approved`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<Appointment[]>(response);
+  },
+
+  // Vet endpoint: Get all approved appointments (smart method with fallback)
+  getAllApprovedForVet: async (): Promise<Appointment[]> => {
+    try {
+      // Try the new approved endpoint first (VET,ADMIN access)
+      return await appointmentsApi.getApproved();
+    } catch (error) {
+      console.log('Approved endpoint failed, trying assigned appointments fallback...', error);
+      // Fallback to assigned appointments only
+      const assignedAppointments = await appointmentsApi.getMyAssigned();
+      return assignedAppointments.filter(apt => apt.status === 'Approved');
+    }
+  },
+
+  // Admin endpoint: Get appointment summary report for workload tracking
+  getSummaryReport: async (): Promise<AppointmentSummaryReport> => {
+    const response = await fetch(`${API_BASE}/summary-report`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<AppointmentSummaryReport>(response);
   }
 };

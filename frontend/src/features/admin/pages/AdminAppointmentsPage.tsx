@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import jsPDF from "jspdf";
 import { appointmentsApi } from "../../shared/api/appointmentsApi";
-import type { Appointment } from "../../shared/types/appointment";
+import type { Appointment, AppointmentSummaryReport } from "../../shared/types/appointment";
 
 export const AdminAppointmentsPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -10,6 +11,7 @@ export const AdminAppointmentsPage: React.FC = () => {
     "all" | "pending" | "approved" | "cancelled"
   >("pending");
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   useEffect(() => {
     loadAppointments();
@@ -66,6 +68,165 @@ export const AdminAppointmentsPage: React.FC = () => {
     }
   };
 
+  const generateSummaryReport = async () => {
+    try {
+      setIsGeneratingReport(true);
+      
+      // Fetch summary report data from backend
+      const reportData: AppointmentSummaryReport = await appointmentsApi.getSummaryReport();
+      
+      // Create PDF document
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let yPosition = 20;
+      
+      // Header
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text("PetCare Plus - Appointment Summary Report", pageWidth / 2, yPosition, { align: "center" });
+      
+      yPosition += 15;
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Generated: ${reportData.generatedAt}`, pageWidth / 2, yPosition, { align: "center" });
+      doc.text(`Report Period: ${reportData.reportPeriod}`, pageWidth / 2, yPosition + 8, { align: "center" });
+      
+      yPosition += 30;
+      
+      // Overall Statistics Section
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("Overall Statistics", 20, yPosition);
+      yPosition += 15;
+      
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      const stats = [
+        `Total Appointments: ${reportData.totalAppointmentsCount}`,
+        `Completed Appointments: ${reportData.completedAppointmentsCount}`,
+        `Cancelled Appointments: ${reportData.cancelledAppointmentsCount}`,
+        `No-Show Appointments: ${reportData.noShowAppointmentsCount}`
+      ];
+      
+      stats.forEach((stat) => {
+        doc.text(stat, 25, yPosition);
+        yPosition += 8;
+      });
+      
+      yPosition += 10;
+      
+      // Workload Metrics Section
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("Workload Metrics", 20, yPosition);
+      yPosition += 15;
+      
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      const workloadMetrics = [
+        `Average Appointments per Day: ${reportData.averageAppointmentsPerDay.toFixed(1)}`,
+        `Busiest Day of Week: ${reportData.busiestDayOfWeek}`,
+        `Peak Appointment Hour: ${reportData.peakAppointmentHour}:00`
+      ];
+      
+      workloadMetrics.forEach((metric) => {
+        doc.text(metric, 25, yPosition);
+        yPosition += 8;
+      });
+      
+      yPosition += 15;
+      
+      // Appointment Categories Section
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("Appointment Categories", 20, yPosition);
+      yPosition += 15;
+      
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      
+      // Upcoming Appointments
+      doc.setFont("helvetica", "bold");
+      doc.text(`Upcoming Appointments: ${reportData.upcomingAppointmentsCount}`, 25, yPosition);
+      yPosition += 10;
+      
+      if (reportData.upcomingAppointments.length > 0) {
+        doc.setFont("helvetica", "normal");
+        reportData.upcomingAppointments.slice(0, 5).forEach((apt) => {
+          const date = new Date(apt.requestedDateTime).toLocaleDateString();
+          const time = new Date(apt.requestedDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          doc.text(`• ${apt.petName} (${apt.ownerName}) - ${date} ${time}`, 30, yPosition);
+          yPosition += 6;
+        });
+        if (reportData.upcomingAppointments.length > 5) {
+          doc.text(`... and ${reportData.upcomingAppointments.length - 5} more`, 30, yPosition);
+          yPosition += 6;
+        }
+      }
+      
+      yPosition += 10;
+      
+      // Pending Appointments
+      doc.setFont("helvetica", "bold");
+      doc.text(`Pending Appointments: ${reportData.pendingAppointmentsCount}`, 25, yPosition);
+      yPosition += 10;
+      
+      if (reportData.pendingAppointments.length > 0) {
+        doc.setFont("helvetica", "normal");
+        reportData.pendingAppointments.slice(0, 5).forEach((apt) => {
+          const date = new Date(apt.requestedDateTime).toLocaleDateString();
+          doc.text(`• ${apt.petName} (${apt.ownerName}) - ${date} - ${apt.reasonForVisit}`, 30, yPosition);
+          yPosition += 6;
+        });
+        if (reportData.pendingAppointments.length > 5) {
+          doc.text(`... and ${reportData.pendingAppointments.length - 5} more`, 30, yPosition);
+          yPosition += 6;
+        }
+      }
+      
+      // Check if we need a new page
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
+      yPosition += 10;
+      
+      // Recent Past Appointments
+      doc.setFont("helvetica", "bold");
+      doc.text(`Recent Past Appointments (Last 30 days): ${reportData.pastAppointmentsCount}`, 25, yPosition);
+      yPosition += 10;
+      
+      if (reportData.pastAppointments.length > 0) {
+        doc.setFont("helvetica", "normal");
+        reportData.pastAppointments.slice(0, 5).forEach((apt) => {
+          const date = new Date(apt.requestedDateTime).toLocaleDateString();
+          doc.text(`• ${apt.petName} (${apt.ownerName}) - ${date} - Status: ${apt.status}`, 30, yPosition);
+          yPosition += 6;
+        });
+        if (reportData.pastAppointments.length > 5) {
+          doc.text(`... and ${reportData.pastAppointments.length - 5} more`, 30, yPosition);
+          yPosition += 6;
+        }
+      }
+      
+      // Footer
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFontSize(8);
+      doc.text(`Report generated on ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+      
+      // Save the PDF
+      const fileName = `appointment-summary-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+      
+    } catch (error) {
+      console.error("Failed to generate report:", error);
+      alert("Failed to generate appointment summary report. Please try again.");
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
@@ -96,13 +257,36 @@ export const AdminAppointmentsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-          Appointment Requests
-        </h1>
-        <p className="mt-1 text-slate-600">
-          Manage pet owner appointment requests
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+            Appointment Requests
+          </h1>
+          <p className="mt-1 text-slate-600">
+            Manage pet owner appointment requests
+          </p>
+        </div>
+        <div className="flex space-x-3">
+          <button
+            onClick={generateSummaryReport}
+            disabled={isGeneratingReport}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isGeneratingReport ? (
+              <>
+                <svg className="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25"></circle>
+                  <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating...
+              </>
+            ) : (
+              <>
+                📊 Download Summary Report
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Filter Tabs */}

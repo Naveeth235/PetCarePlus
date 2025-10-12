@@ -5,3 +5,4 @@
 export { OwnerPetsPage } from './OwnerPetsPage';
 export { OwnerAppointmentsPage } from './OwnerAppointmentsPage';
 export { OwnerRequestAppointmentPage } from './OwnerRequestAppointmentPage';
+export { default as OwnerMedicalRecordsPage } from './OwnerMedicalRecordsPage';

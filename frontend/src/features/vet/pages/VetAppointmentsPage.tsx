@@ -1,36 +1,52 @@
-// OwnerAppointmentsPage.tsx
-// Purpose: Display all of owner's appointments with status filtering and visual indicators
-// Features: Filter tabs (All/Pending/Approved/Cancelled), status badges, appointment cards with details
-// Route: /owner/appointments - "As an owner, I want to track my appointment requests and their status"
-
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { appointmentsApi } from "../../shared/api/appointmentsApi";
 import type { Appointment } from "../../shared/types/appointment";
 
-export const OwnerAppointmentsPage: React.FC = () => {
+const VetAppointmentsPage = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<
-    "all" | "pending" | "approved" | "cancelled"
-  >("all");
+  const [filter, setFilter] = useState<"all" | "approved" | "pending" | "completed">("approved");
 
   useEffect(() => {
-    loadMyAppointments();
+    loadAppointments();
   }, []);
 
-  const loadMyAppointments = async () => {
+  const loadAppointments = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
-      const data = await appointmentsApi.getMy();
+      console.log('Loading vet appointments...');
+      
+      // Load all approved appointments (tries all, falls back to assigned)
+      const allAppointments = await appointmentsApi.getAllApprovedForVet();
+      console.log('Loaded approved appointments for vet:', allAppointments);
+      
+      // For the appointments page, we want to show all appointments the vet can access
+      let data: Appointment[] = [];
+      try {
+        // First try to get all appointments (admin access)
+        data = await appointmentsApi.getAll();
+        console.log('Loaded all appointments (admin access):', data);
+      } catch (adminError) {
+        try {
+          // Then try to get all approved appointments (vet access)
+          data = await appointmentsApi.getApproved();
+          console.log('Loaded approved appointments (vet access):', data);
+        } catch (approvedError) {
+          console.log('Approved access denied, loading assigned appointments...', approvedError);
+          // Final fallback to assigned appointments only
+          data = await appointmentsApi.getMyAssigned();
+          console.log('Loaded assigned appointments:', data);
+        }
+      }
+      
       setAppointments(data);
     } catch (error) {
       console.error("Failed to load appointments:", error);
-      setError("Failed to load your appointments. Please try again.");
+      setError(`Failed to load appointments: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -45,6 +61,8 @@ export const OwnerAppointmentsPage: React.FC = () => {
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "approved":
         return "bg-green-100 text-green-800 border-green-200";
+      case "completed":
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "cancelled":
         return "bg-red-100 text-red-800 border-red-200";
       default:
@@ -52,24 +70,21 @@ export const OwnerAppointmentsPage: React.FC = () => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "⏳";
-      case "approved":
-        return "✅";
-      case "cancelled":
-        return "❌";
-      default:
-        return "📅";
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="text-lg text-slate-600 animate-pulse">
-          Loading your appointments...
+          Loading appointments...
         </div>
       </div>
     );
@@ -84,19 +99,8 @@ export const OwnerAppointmentsPage: React.FC = () => {
             My Appointments
           </h1>
           <p className="mt-2 text-slate-600">
-            Track your upcoming and past appointments
+            Manage your assigned appointments and patient visits
           </p>
-        </div>
-        <div>
-          <Link
-            to="/owner/appointments/request"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Request Appointment
-          </Link>
         </div>
       </div>
 
@@ -104,9 +108,9 @@ export const OwnerAppointmentsPage: React.FC = () => {
       <div className="flex space-x-1 bg-gray-100 rounded-xl p-1">
         {[
           { key: "all", label: "All" },
-          { key: "pending", label: "Pending" },
           { key: "approved", label: "Approved" },
-          { key: "cancelled", label: "Cancelled" },
+          { key: "pending", label: "Pending" },
+          { key: "completed", label: "Completed" },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -135,7 +139,7 @@ export const OwnerAppointmentsPage: React.FC = () => {
         <div className="rounded-2xl bg-red-50 p-4 text-red-800 ring-1 ring-red-200 animate-fadeIn">
           <p>{error}</p>
           <button
-            onClick={loadMyAppointments}
+            onClick={loadAppointments}
             className="mt-2 inline-flex items-center text-sm font-medium text-red-700 underline hover:text-red-800"
           >
             Try again
@@ -154,11 +158,8 @@ export const OwnerAppointmentsPage: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-2xl">
-                      {getStatusIcon(appointment.status)}
-                    </span>
                     <h3 className="text-lg font-semibold text-slate-800">
-                      Appointment for {appointment.petName}
+                      {appointment.petName}
                     </h3>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
@@ -172,35 +173,29 @@ export const OwnerAppointmentsPage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                       <p className="text-sm text-gray-600">
-                        <span className="font-medium">Date:</span>{" "}
-                        {new Date(
-                          appointment.requestedDateTime
-                        ).toLocaleDateString()}
+                        <span className="font-medium">Owner:</span>{" "}
+                        {appointment.ownerName}
                       </p>
                       <p className="text-sm text-gray-600">
-                        <span className="font-medium">Time:</span>{" "}
-                        {new Date(
-                          appointment.requestedDateTime
-                        ).toLocaleTimeString()}
+                        <span className="font-medium">Date:</span>{" "}
+                        {formatDate(appointment.requestedDateTime)}
                       </p>
-                      {appointment.vetName && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Veterinarian:</span>{" "}
-                          {appointment.vetName}
-                        </p>
-                      )}
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Reason:</span>{" "}
+                        {appointment.reasonForVisit}
+                      </p>
                     </div>
                     <div>
-                      {appointment.reasonForVisit && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Reason:</span>{" "}
-                          {appointment.reasonForVisit}
-                        </p>
-                      )}
                       <p className="text-sm text-gray-600">
                         <span className="font-medium">Requested:</span>{" "}
                         {new Date(appointment.createdAt).toLocaleDateString()}
                       </p>
+                      {appointment.notes && (
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Notes:</span>{" "}
+                          {appointment.notes}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -222,15 +217,13 @@ export const OwnerAppointmentsPage: React.FC = () => {
           <div className="mb-3 text-6xl text-slate-400 animate-pulse">📅</div>
           <p className="text-lg text-slate-600">
             {filter === "all"
-              ? "You don't have any appointments yet."
+              ? "No appointments assigned yet."
               : `No ${filter} appointments found.`}
-          </p>
-          <p className="text-slate-500 mt-2">
-            {filter === "all" &&
-              "Request your first appointment to get started."}
           </p>
         </div>
       )}
     </div>
   );
 };
+
+export default VetAppointmentsPage;
