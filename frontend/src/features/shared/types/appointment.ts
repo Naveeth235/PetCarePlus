@@ -45,3 +45,31 @@ export interface UpdateAppointmentStatusRequest {
   adminNotes?: string;
   vetUserId?: string;
 }
+
+export interface AppointmentSummaryReport {
+  generatedAt: string;
+  reportPeriod: string;
+  
+  // Upcoming appointments statistics
+  upcomingAppointmentsCount: number;
+  upcomingAppointments: Appointment[];
+  
+  // Pending appointments statistics
+  pendingAppointmentsCount: number;
+  pendingAppointments: Appointment[];
+  
+  // Past appointments statistics
+  pastAppointmentsCount: number;
+  pastAppointments: Appointment[];
+  
+  // Overall statistics
+  totalAppointmentsCount: number;
+  completedAppointmentsCount: number;
+  cancelledAppointmentsCount: number;
+  noShowAppointmentsCount: number;
+  
+  // Workload metrics
+  averageAppointmentsPerDay: number;
+  busiestDayOfWeek: string;
+  peakAppointmentHour: number;
+}
