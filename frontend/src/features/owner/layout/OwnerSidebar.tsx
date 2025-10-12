@@ -8,7 +8,6 @@ import {
   FaUser,
   FaCalendarAlt,
   FaFileAlt,
-  FaHeart,
 } from "react-icons/fa";
 
 type Props = {
@@ -23,7 +22,6 @@ const menu = [
   { label: "My Pets", to: "/owner/pets", icon: <FaPaw /> },
   { label: "Medical Records", to: "/owner/medical-records", icon: <FaFileAlt /> },
   { label: "Appointments", to: "/owner/appointments", icon: <FaCalendarAlt /> },
-  { label: "Pet Health", to: "/owner/health", icon: <FaHeart /> },
   { label: "Profile", to: "/owner/profile", icon: <FaUser /> },
 ];
 
@@ -66,6 +64,7 @@ export default function OwnerSidebar({
           <NavLink
             key={m.to}
             to={m.to}
+            end={m.to === "/owner"} // Only match exactly for dashboard
             className={({ isActive }) =>
               [
                 // base item style

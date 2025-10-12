@@ -12,7 +12,7 @@ using PetCare.Infrastructure.Jwt;           // JwtOptions, JwtTokenGenerator
 using PetCare.Infrastructure.Persistence;   // PetCareDbContext
 using PetCare.Infrastructure.Persistence.Repositories;  // PetRepository
 using PetCare.Application.Common.Interfaces; // IPetRepository
-using PetCare.Infrastructure.Services; // UserService
+using PetCare.Infrastructure.Services; // UserService, NotificationService
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -66,7 +66,12 @@ else
 }
 
 // ---------- Controllers & Swagger ----------
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Configure JSON serialization to use string names for enums instead of numbers
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -99,9 +104,14 @@ builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 builder.Services.AddScoped<IVaccinationRepository, VaccinationRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+// Sprint: Appointment system repositories
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 // ---------- Services ----------
 builder.Services.AddScoped<IUserService, PetCare.Infrastructure.Services.UserService>();
+// Sprint: Appointment system services
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // ---------- MediatR ----------
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PetCare.Application.Pets.Commands.CreatePet.CreatePetCommand).Assembly));

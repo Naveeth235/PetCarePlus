@@ -5,10 +5,9 @@ import {
   FaChevronRight,
   FaHome,
   FaClipboardList,
-  FaSearch,
   FaCalendarAlt,
   FaFileAlt,
-  FaPaw,
+  FaUser,
 } from "react-icons/fa";
 
 type Props = {
@@ -21,10 +20,9 @@ type Props = {
 const menu = [
   { label: "Dashboard", to: "/vet", icon: <FaHome /> },
   { label: "Medical Records", to: "/vet/medical-records", icon: <FaFileAlt /> },
-  { label: "Search Pets", to: "/vet/search", icon: <FaSearch /> },
   { label: "Appointments", to: "/vet/appointments", icon: <FaCalendarAlt /> },
   { label: "Treatments", to: "/vet/treatments", icon: <FaClipboardList /> },
-  { label: "Pet Management", to: "/vet/pets", icon: <FaPaw /> },
+  { label: "Profile", to: "/vet/profile", icon: <FaUser /> },
 ];
 
 export default function VetSidebar({
@@ -66,6 +64,7 @@ export default function VetSidebar({
           <NavLink
             key={m.to}
             to={m.to}
+            end={m.to === "/vet"} // Only match exactly for dashboard
             className={({ isActive }) =>
               [
                 // base item style

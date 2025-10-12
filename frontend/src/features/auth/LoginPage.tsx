@@ -181,7 +181,7 @@ function LoginPage() {
               <img
                 src="./Petcare_cover_image.jpg"
                 alt="Veterinary care illustration"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
                 loading="eager"
               />
             </div>

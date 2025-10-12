@@ -30,6 +30,9 @@ public class Pet
     public ICollection<MedicalRecords.Vaccination> Vaccinations { get; set; } = new List<MedicalRecords.Vaccination>();
     public ICollection<MedicalRecords.Treatment> Treatments { get; set; } = new List<MedicalRecords.Treatment>();
     public ICollection<MedicalRecords.Prescription> Prescriptions { get; set; } = new List<MedicalRecords.Prescription>();
+    
+    // Sprint Addition: Navigation property for appointments
+    public ICollection<Appointments.Appointment> Appointments { get; set; } = new List<Appointments.Appointment>();
 
     // Computed properties
     public int? AgeInYears => DateOfBirth.HasValue 
