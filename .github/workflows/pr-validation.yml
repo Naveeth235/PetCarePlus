@@ -103,9 +103,20 @@ jobs:
         docker build -t petcareplus-test .
         echo "✅ Docker build successful"
 
-    - name: Comment PR Success
-      uses: actions/github-script@v7
+    - name: Create Success Summary
       if: success()
+      run: |
+        echo "## ✅ All Tests Passed!" >> $GITHUB_STEP_SUMMARY
+        echo "🎉 All tests passed! Backend, frontend, and Docker build are ready for production deployment." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Test Results:" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Backend tests: All passed" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Frontend build: Successful" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Docker build: Successful" >> $GITHUB_STEP_SUMMARY
+
+    - name: Comment PR Success (Non-Fork Only)
+      uses: actions/github-script@v7
+      if: success() && github.event.pull_request.head.repo.full_name == github.repository
       with:
         script: |
           github.rest.issues.createComment({
@@ -115,9 +126,20 @@ jobs:
             body: '🎉 All tests passed! Backend, frontend, and Docker build are ready for production deployment.'
           })
 
-    - name: Comment PR Failure
-      uses: actions/github-script@v7
+    - name: Create Failure Summary
       if: failure()
+      run: |
+        echo "## ❌ Tests Failed!" >> $GITHUB_STEP_SUMMARY
+        echo "❌ Some tests failed. Please check the workflow logs and fix the issues before merging." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### What to do:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Check the workflow logs above for specific error details" >> $GITHUB_STEP_SUMMARY
+        echo "2. Fix the failing tests in your branch" >> $GITHUB_STEP_SUMMARY
+        echo "3. Push your changes to re-run the validation" >> $GITHUB_STEP_SUMMARY
+
+    - name: Comment PR Failure (Non-Fork Only)
+      uses: actions/github-script@v7
+      if: failure() && github.event.pull_request.head.repo.full_name == github.repository
       with:
         script: |
           github.rest.issues.createComment({
