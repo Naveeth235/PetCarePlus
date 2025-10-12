@@ -235,6 +235,104 @@ public class AppointmentsController : ControllerBase
         return Ok(dtos);
     }
 
+    // New Feature: Admin gets appointment summary report for workload tracking
+    [HttpGet("summary-report")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> GetAppointmentSummaryReport()
+    {
+        var appointments = await _appointmentRepository.GetAllAsync();
+        var now = DateTime.Now;
+
+        // Categorize appointments
+        var upcomingAppointments = appointments.Where(a => 
+            a.RequestedDateTime > now && 
+            (a.Status == AppointmentStatus.Approved || a.Status == AppointmentStatus.Pending)
+        ).ToList();
+
+        var pendingAppointments = appointments.Where(a => 
+            a.Status == AppointmentStatus.Pending
+        ).ToList();
+
+        var pastAppointments = appointments.Where(a => 
+            a.RequestedDateTime <= now &&
+            (a.Status == AppointmentStatus.Completed || a.Status == AppointmentStatus.Cancelled || a.Status == AppointmentStatus.NoShow)
+        ).ToList();
+
+        // Generate summary statistics
+        var report = new AppointmentSummaryReportDto
+        {
+            GeneratedAt = DateTime.Now,
+            ReportPeriod = $"As of {DateTime.Now:MMMM dd, yyyy}",
+            
+            // Upcoming appointments statistics
+            UpcomingAppointmentsCount = upcomingAppointments.Count,
+            UpcomingAppointments = await ProcessAppointmentsList(upcomingAppointments.Take(10).ToList()),
+            
+            // Pending appointments statistics  
+            PendingAppointmentsCount = pendingAppointments.Count,
+            PendingAppointments = await ProcessAppointmentsList(pendingAppointments.Take(10).ToList()),
+            
+            // Past appointments statistics (last 30 days)
+            PastAppointmentsCount = pastAppointments.Count(a => a.RequestedDateTime >= now.AddDays(-30)),
+            PastAppointments = await ProcessAppointmentsList(pastAppointments.Where(a => a.RequestedDateTime >= now.AddDays(-30)).Take(10).ToList()),
+            
+            // Overall statistics
+            TotalAppointmentsCount = appointments.Count(),
+            CompletedAppointmentsCount = appointments.Count(a => a.Status == AppointmentStatus.Completed),
+            CancelledAppointmentsCount = appointments.Count(a => a.Status == AppointmentStatus.Cancelled),
+            NoShowAppointmentsCount = appointments.Count(a => a.Status == AppointmentStatus.NoShow),
+            
+            // Workload metrics
+            AverageAppointmentsPerDay = CalculateAverageAppointmentsPerDay(appointments.ToList()),
+            BusiestDayOfWeek = CalculateBusiestDayOfWeek(appointments.ToList()),
+            PeakAppointmentHour = CalculatePeakAppointmentHour(appointments.ToList())
+        };
+
+        return Ok(report);
+    }
+
+    // Helper method to process appointments list for DTOs
+    private async Task<List<AppointmentDto>> ProcessAppointmentsList(List<Appointment> appointments)
+    {
+        var dtos = new List<AppointmentDto>();
+        foreach (var appointment in appointments)
+        {
+            var dto = await MapToDto(appointment);
+            dtos.Add(dto);
+        }
+        return dtos;
+    }
+
+    // Helper method to calculate average appointments per day (last 30 days)
+    private double CalculateAverageAppointmentsPerDay(List<Appointment> appointments)
+    {
+        var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+        var recentAppointments = appointments.Where(a => a.RequestedDateTime >= thirtyDaysAgo).ToList();
+        return recentAppointments.Count / 30.0;
+    }
+
+    // Helper method to find busiest day of week
+    private string CalculateBusiestDayOfWeek(List<Appointment> appointments)
+    {
+        var dayGroups = appointments
+            .GroupBy(a => a.RequestedDateTime.DayOfWeek)
+            .OrderByDescending(g => g.Count())
+            .FirstOrDefault();
+        
+        return dayGroups?.Key.ToString() ?? "N/A";
+    }
+
+    // Helper method to find peak appointment hour
+    private int CalculatePeakAppointmentHour(List<Appointment> appointments)
+    {
+        var hourGroups = appointments
+            .GroupBy(a => a.RequestedDateTime.Hour)
+            .OrderByDescending(g => g.Count())
+            .FirstOrDefault();
+        
+        return hourGroups?.Key ?? 0;
+    }
+
     // Helper method to map domain entity to DTO with user names
     private async Task<AppointmentDto> MapToDto(Appointment appointment)
     {
