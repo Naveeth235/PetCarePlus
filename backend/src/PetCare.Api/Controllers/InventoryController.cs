@@ -33,17 +33,33 @@ namespace PetCare.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateInventoryDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            try
+            {
+                var created = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return 400 BadRequest with duplicate message
+                return BadRequest(new { duplicate = true, message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInventoryDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var success = await _service.UpdateAsync(id, dto);
-            if (!success) return NotFound();
-            return NoContent();
+            try
+            {
+                var success = await _service.UpdateAsync(id, dto);
+                if (!success) return NotFound();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return 400 BadRequest with duplicate message
+                return BadRequest(new { duplicate = true, message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

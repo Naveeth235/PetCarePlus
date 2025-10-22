@@ -21,6 +21,7 @@ const AdminInventoryPage: React.FC = () => {
   const [form, setForm] = useState<CreateInventoryDto | UpdateInventoryDto>(emptyForm);
   const [error, setError] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -36,31 +37,49 @@ const AdminInventoryPage: React.FC = () => {
   const openCreate = () => {
     setEditing(null);
     setForm(emptyForm);
+    setFormError(null); // Clear form error when opening
     setModalOpen(true);
   };
 
   const openEdit = (item: InventoryItem) => {
     setEditing(item);
     setForm({ name: item.name, quantity: item.quantity, category: item.category, supplier: item.supplier, expiryDate: item.expiryDate });
+    setFormError(null); // Clear form error when opening
     setModalOpen(true);
   };
 
   const handleOk = async () => {
     setLoading(true);
+    setFormError(null);
     if (editing) {
       const res = await updateInventoryItem(editing.id, form as UpdateInventoryDto);
+      if (res && (res as any).duplicate) {
+        setFormError("An item with this name already exists.");
+        setLoading(false);
+        return;
+      }
       if (res.ok) {
         message.success("Updated");
         setModalOpen(false);
         load();
-      } else message.error(res.detail || "Update failed");
+      } else {
+        setFormError("Update failed");
+      }
     } else {
       const res = await createInventoryItem(form as CreateInventoryDto);
+      const msg = (res as any).message || (res as any).detail || '';
+      if ((res && (res as any).duplicate) || msg.toLowerCase().includes('already exists')) {
+        setFormError("An item with this name already exists.");
+        setLoading(false);
+        return;
+      }
       if (res.ok) {
         message.success("Created");
         setModalOpen(false);
         load();
-      } else message.error(res.detail || "Create failed");
+      } else {
+        setFormError("Create failed");
+      }
     }
     setLoading(false);
   };
@@ -81,7 +100,9 @@ const AdminInventoryPage: React.FC = () => {
 
   return (
     <div>
-      <h2>Inventory Management</h2>
+      <h1 style={{ fontSize: 25, fontWeight: 700, padding: '0 0 32px 0', textAlign: 'left' }}>
+        Inventory Management
+      </h1>
       <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
         <Button type="primary" onClick={openCreate}>Add Item</Button>
         <Select
@@ -116,9 +137,10 @@ const AdminInventoryPage: React.FC = () => {
         open={modalOpen}
         title={editing ? "Edit Item" : "Add Item"}
         onOk={handleOk}
-        onCancel={() => setModalOpen(false)}
+        onCancel={() => { setModalOpen(false); setFormError(null); }}
         confirmLoading={loading}
       >
+        {formError && <div style={{ color: "red", marginBottom: 8 }}>{formError}</div>}
         <Input
           placeholder="Name"
           value={form.name}

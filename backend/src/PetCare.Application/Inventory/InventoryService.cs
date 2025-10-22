@@ -46,6 +46,13 @@ namespace PetCare.Application.Inventory
 
         public async Task<InventoryItemDto> CreateAsync(CreateInventoryDto dto)
         {
+            // Check for duplicate by name (case-insensitive, trimmed)
+            var normalizedName = dto.Name.Trim().ToLower();
+            var exists = await _repository.GetAllAsync();
+            if (exists.Any(i => i.Name.Trim().ToLower() == normalizedName))
+            {
+                throw new InvalidOperationException("An item with this name already exists.");
+            }
             var item = new InventoryItem
             {
                 Name = dto.Name,
@@ -70,6 +77,13 @@ namespace PetCare.Application.Inventory
         {
             var item = await _repository.GetByIdAsync(id);
             if (item == null) return false;
+            // Check for duplicate by name (case-insensitive, trimmed), excluding current item
+            var normalizedName = dto.Name.Trim().ToLower();
+            var exists = await _repository.GetAllAsync();
+            if (exists.Any(i => i.Name.Trim().ToLower() == normalizedName && i.Id != id))
+            {
+                throw new InvalidOperationException("An item with this name already exists.");
+            }
             item.Name = dto.Name;
             item.Quantity = dto.Quantity;
             item.Category = dto.Category;
