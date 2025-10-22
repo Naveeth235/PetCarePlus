@@ -11,6 +11,7 @@ const categoryColors: Record<string, string> = {
   Toys: "orange",
   Supplies: "purple",
   Other: "default",
+  Tools: "geekblue"
 };
 
 // Low stock thresholds
@@ -100,6 +101,7 @@ const AdminInventoryPage: React.FC = () => {
 
   // Get unique categories from items
   const categories = Array.from(new Set(items.map(i => i.category || "Other")));
+  const filterOptions = [{ label: 'All', value: '' }, ...categories.map(c => ({ label: c, value: c }))];
   const filteredItems = categoryFilter ? items.filter(i => i.category === categoryFilter) : items;
 
   // Low stock items for banners
@@ -155,9 +157,9 @@ const AdminInventoryPage: React.FC = () => {
           allowClear
           placeholder="Category"
           style={{ minWidth: 180 }}
-          value={categoryFilter}
-          onChange={setCategoryFilter}
-          options={categories.map(c => ({ label: c, value: c }))}
+          value={categoryFilter ?? ''}
+          onChange={val => setCategoryFilter(val || undefined)}
+          options={filterOptions}
         />
       </div>
       <Row gutter={[16, 16]}>
@@ -217,7 +219,9 @@ const AdminInventoryPage: React.FC = () => {
             { value: "Food", label: "Food" },
             { value: "Toys", label: "Toys" },
             { value: "Supplies", label: "Supplies" },
+            { value: "Tools", label: "Tools" },
             { value: "Other", label: "Other" },
+            
           ]}
           allowClear
           showSearch
@@ -233,6 +237,7 @@ const AdminInventoryPage: React.FC = () => {
           type="date"
           value={form.expiryDate ? form.expiryDate.slice(0, 10) : ""}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, expiryDate: e.target.value }))}
+          style={{ marginBottom: 8 }}
         />
       </Modal>
       {error && <div style={{ color: "red" }}>{error}</div>}
