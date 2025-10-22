@@ -29,6 +29,20 @@ namespace PetCare.Api.Controllers
             return Ok(item);
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q)) return BadRequest("Query is required.");
+            var items = await _service.GetAllAsync();
+            var results = items.Where(i =>
+                (!string.IsNullOrEmpty(i.Name) && i.Name.Contains(q, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(i.Category) && i.Category.Contains(q, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(i.Supplier) && i.Supplier.Contains(q, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(i.Description) && i.Description.Contains(q, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+            return Ok(results);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateInventoryDto dto)
         {

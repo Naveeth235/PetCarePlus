@@ -1,6 +1,6 @@
 // src/features/admin/pages/AdminInventoryPage.tsx
 import React, { useEffect, useState } from "react";
-import { fetchInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem, type InventoryItem, type CreateInventoryDto, type UpdateInventoryDto } from "../inventoryApi";
+import { fetchInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem, searchInventory, type InventoryItem, type CreateInventoryDto, type UpdateInventoryDto } from "../inventoryApi";
 import { Button, Modal, Input, message, Popconfirm, Select, Card as AntdCard, Row, Col, Tag } from "antd";
 
 const emptyForm: CreateInventoryDto = { name: "", quantity: 0, category: "", supplier: "", expiryDate: undefined, description: "" };
@@ -27,6 +27,8 @@ const AdminInventoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [formError, setFormError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [searching, setSearching] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -99,6 +101,35 @@ const AdminInventoryPage: React.FC = () => {
     setLoading(false);
   };
 
+  const handleSearch = async () => {
+    if (!search.trim()) {
+      setCategoryFilter(undefined);
+      load();
+      return;
+    }
+    setSearching(true);
+    setError(null);
+    const res = await searchInventory(search);
+    if (res.ok) {
+      setItems(res.data);
+      // If only one item is found, set the filter to its category
+      if (res.data.length === 1) {
+        setCategoryFilter(res.data[0].category);
+      } else if (res.data.length > 1) {
+        // If all items have the same category, set filter to that category
+        const uniqueCategories = Array.from(new Set(res.data.map(i => i.category)));
+        if (uniqueCategories.length === 1) {
+          setCategoryFilter(uniqueCategories[0]);
+        } else {
+          setCategoryFilter(undefined);
+        }
+      } else {
+        setCategoryFilter(undefined);
+      }
+    } else setError(res.detail || "Search failed");
+    setSearching(false);
+  };
+
   // Get unique categories from items
   const categories = Array.from(new Set(items.map(i => i.category || "Other")));
   const filterOptions = [{ label: 'All', value: '' }, ...categories.map(c => ({ label: c, value: c }))];
@@ -151,14 +182,31 @@ const AdminInventoryPage: React.FC = () => {
           )}
         </div>
       )}
-      <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 40, marginBottom: 16, alignItems: 'center', justifyContent: 'flex-start' }}>
         <Button type="primary" onClick={openCreate}>Add Item</Button>
+        <Input.Search
+          placeholder="Search inventory..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          onSearch={handleSearch}
+          enterButton
+          loading={searching}
+          style={{ maxWidth: 320, marginLeft: 0 }}
+        />
         <Select
           allowClear
           placeholder="Category"
-          style={{ minWidth: 180 }}
+          style={{ minWidth: 180, marginLeft: 0 }}
           value={categoryFilter ?? ''}
-          onChange={val => setCategoryFilter(val || undefined)}
+          onChange={val => {
+            if (!val) {
+              setCategoryFilter(undefined);
+              setSearch("");
+              load(); // Show all products when filter is set to All
+            } else {
+              setCategoryFilter(val);
+            }
+          }}
           options={filterOptions}
         />
       </div>

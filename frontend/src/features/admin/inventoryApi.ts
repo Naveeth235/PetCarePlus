@@ -117,3 +117,19 @@ export async function uploadInventoryPhoto(file: File): Promise<{ ok: true; url:
     return { ok: false, detail: String(e) };
   }
 }
+
+export async function searchInventory(query: string): Promise<{ ok: true; data: InventoryItem[] } | { ok: false; detail?: string }> {
+  if (!BASE) return { ok: false, detail: "VITE_API_BASE_URL not set" };
+  const token = getToken();
+  if (!token) return { ok: false, detail: "Unauthorized" };
+  try {
+    const res = await fetch(`${BASE}/Inventory/search?q=${encodeURIComponent(query)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return { ok: false, detail: await res.text() };
+    const data = await res.json();
+    return { ok: true, data };
+  } catch (e) {
+    return { ok: false, detail: String(e) };
+  }
+}
