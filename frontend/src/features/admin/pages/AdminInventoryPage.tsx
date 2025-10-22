@@ -217,10 +217,17 @@ const AdminInventoryPage: React.FC = () => {
             <AntdCard
               style={{ minHeight: 210, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
               bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-              title={<span>{item.name} <Tag color={categoryColors[item.category] || "default"}>{item.category || "Other"}</Tag>{' '}
-                {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <Tag color="red">Critical</Tag>}
-                {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <Tag color="orange">Low Stock</Tag>}
-              </span>}
+              title={
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>{item.name}</span>
+                  <span style={{ display: 'flex', gap: 8, marginRight: 8, minWidth: 160, justifyContent: 'flex-end' }}>
+                    <Tag color={categoryColors[item.category] || "default"}>{item.category || "Other"}</Tag>
+                    {item.quantity === 0 && <Tag style={{ fontWeight: 600, fontSize: 12, background: '#a8071a', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px' }}>Out of Stock</Tag>}
+                    {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <Tag color="red" style={{ marginLeft: 0 }}>Critical</Tag>}
+                    {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <Tag color="orange" style={{ marginLeft: 0 }}>Low Stock</Tag>}
+                  </span>
+                </div>
+              }
               actions={[
                 <Button onClick={() => openEdit(item)} key="edit">Edit</Button>,
                 <Popconfirm title="Delete?" onConfirm={() => handleDelete(item.id)} key="delete">
@@ -255,6 +262,7 @@ const AdminInventoryPage: React.FC = () => {
                       load();
                     }}
                   />
+                  {item.quantity === 0 && <span style={{ color: '#a8071a', fontWeight: 600, marginLeft: 8, fontSize: 11, lineHeight: 1, whiteSpace: 'nowrap' }}>(Out of Stock)</span>}
                   {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600, marginLeft: 8 }}>(Critical)</span>}
                   {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600, marginLeft: 8 }}>(Low)</span>}
                 </p>
