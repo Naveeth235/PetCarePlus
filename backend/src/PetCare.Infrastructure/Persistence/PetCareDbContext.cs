@@ -227,7 +227,8 @@ public class PetCareDbContext : IdentityDbContext<ApplicationUser>
             b.Property(i => i.Category).HasMaxLength(100).IsRequired();
             b.Property(i => i.Supplier).HasMaxLength(200).IsRequired();
             b.Property(i => i.Quantity).IsRequired();
-            b.Property(i => i.ExpiryDate).IsRequired();
+            b.Property(i => i.ExpiryDate); // Already nullable, no .IsRequired()
+            b.Property(i => i.Description).HasMaxLength(1000);
 
             // Indexes for common queries
             b.HasIndex(i => i.Name);

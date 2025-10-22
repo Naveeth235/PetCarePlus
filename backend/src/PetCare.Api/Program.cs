@@ -206,6 +206,8 @@ if (app.Environment.IsProduction())
     app.UseStaticFiles();
 }
 
+app.UseStaticFiles();
+
 app.UseCors("ui");
 
 app.UseAuthentication();

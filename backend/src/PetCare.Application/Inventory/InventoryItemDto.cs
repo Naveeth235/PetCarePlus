@@ -10,7 +10,7 @@ namespace PetCare.Application.Inventory
         public string Category { get; set; } = string.Empty;
         public string Supplier { get; set; } = string.Empty;
 
-        public DateTime ExpiryDate { get; set; }
-
+        public DateTime? ExpiryDate { get; set; }
+        public string? Description { get; set; }
     }
 }

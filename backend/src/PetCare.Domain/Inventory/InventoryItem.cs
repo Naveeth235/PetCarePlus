@@ -17,6 +17,9 @@ namespace PetCare.Domain.Inventory
         
         [Required]
         public string Supplier { get; set; } = string.Empty;
-        public DateTime ExpiryDate { get; set; }
+
+        public DateTime? ExpiryDate { get; set; }
+
+        public string? Description { get; set; }
     }
 }

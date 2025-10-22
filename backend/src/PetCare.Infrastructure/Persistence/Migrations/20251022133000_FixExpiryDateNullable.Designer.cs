@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetCare.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PetCare.Infrastructure.Persistence;
 namespace PetCare.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PetCareDbContext))]
-    partial class PetCareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251022133000_FixExpiryDateNullable")]
+    partial class FixExpiryDateNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,10 +231,6 @@ namespace PetCare.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime(6)");

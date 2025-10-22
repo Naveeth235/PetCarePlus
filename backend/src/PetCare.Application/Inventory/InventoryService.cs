@@ -25,7 +25,8 @@ namespace PetCare.Application.Inventory
                 Quantity = i.Quantity,
                 Category = i.Category,
                 Supplier = i.Supplier,
-                ExpiryDate = i.ExpiryDate
+                ExpiryDate = i.ExpiryDate,
+                Description = i.Description
             });
         }
 
@@ -40,7 +41,8 @@ namespace PetCare.Application.Inventory
                 Quantity = item.Quantity,
                 Category = item.Category,
                 Supplier = item.Supplier,
-                ExpiryDate = item.ExpiryDate
+                ExpiryDate = item.ExpiryDate,
+                Description = item.Description
             };
         }
 
@@ -59,7 +61,8 @@ namespace PetCare.Application.Inventory
                 Quantity = dto.Quantity,
                 Category = dto.Category,
                 Supplier = dto.Supplier,
-                ExpiryDate = dto.ExpiryDate
+                ExpiryDate = dto.ExpiryDate,
+                Description = dto.Description
             };
             var created = await _repository.AddAsync(item);
             return new InventoryItemDto
@@ -69,7 +72,8 @@ namespace PetCare.Application.Inventory
                 Quantity = created.Quantity,
                 Category = created.Category,
                 Supplier = created.Supplier,
-                ExpiryDate = created.ExpiryDate
+                ExpiryDate = created.ExpiryDate,
+                Description = created.Description
             };
         }
 
@@ -89,6 +93,7 @@ namespace PetCare.Application.Inventory
             item.Category = dto.Category;
             item.Supplier = dto.Supplier;
             item.ExpiryDate = dto.ExpiryDate;
+            item.Description = dto.Description;
             await _repository.UpdateAsync(item);
             return true;
         }

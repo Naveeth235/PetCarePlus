@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { fetchInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem, type InventoryItem, type CreateInventoryDto, type UpdateInventoryDto } from "../inventoryApi";
 import { Button, Modal, Input, message, Popconfirm, Select, Card as AntdCard, Row, Col, Tag } from "antd";
 
-const emptyForm: CreateInventoryDto = { name: "", quantity: 0, category: "", supplier: "", expiryDate: "" };
+const emptyForm: CreateInventoryDto = { name: "", quantity: 0, category: "", supplier: "", expiryDate: undefined, description: "" };
 
 const categoryColors: Record<string, string> = {
   Medicine: "blue",
@@ -48,7 +48,7 @@ const AdminInventoryPage: React.FC = () => {
 
   const openEdit = (item: InventoryItem) => {
     setEditing(item);
-    setForm({ name: item.name, quantity: item.quantity, category: item.category, supplier: item.supplier, expiryDate: item.expiryDate });
+    setForm({ name: item.name, quantity: item.quantity, category: item.category, supplier: item.supplier, expiryDate: item.expiryDate || undefined, description: item.description || "" });
     setFormError(null); // Clear form error when opening
     setModalOpen(true);
   };
@@ -166,6 +166,8 @@ const AdminInventoryPage: React.FC = () => {
         {filteredItems.map(item => (
           <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
             <AntdCard
+              style={{ minHeight: 210, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
               title={<span>{item.name} <Tag color={categoryColors[item.category] || "default"}>{item.category || "Other"}</Tag>{' '}
                 {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <Tag color="red">Critical</Tag>}
                 {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <Tag color="orange">Low Stock</Tag>}
@@ -177,9 +179,16 @@ const AdminInventoryPage: React.FC = () => {
                 </Popconfirm>
               ]}
             >
-              <p><b>Quantity:</b> {item.quantity} {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600 }}>(Critical)</span>}{item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600 }}>(Low)</span>}</p>
-              <p><b>Supplier:</b> {item.supplier}</p>
-              <p><b>Expiry Date:</b> {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : "-"}</p>
+              <div style={{ flex: 1 }}>
+                <p><b>Quantity:</b> {item.quantity} {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600 }}>(Critical)</span>}{item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600 }}>(Low)</span>}</p>
+                <p><b>Supplier:</b> {item.supplier}</p>
+                {item.expiryDate && (
+                  <p><b>Expiry Date:</b> {new Date(item.expiryDate).toLocaleDateString()}</p>
+                )}
+                {item.description && (
+                  <p><b>Description:</b> {item.description}</p>
+                )}
+              </div>
             </AntdCard>
           </Col>
         ))}
@@ -221,7 +230,6 @@ const AdminInventoryPage: React.FC = () => {
             { value: "Supplies", label: "Supplies" },
             { value: "Tools", label: "Tools" },
             { value: "Other", label: "Other" },
-            
           ]}
           allowClear
           showSearch
@@ -232,11 +240,22 @@ const AdminInventoryPage: React.FC = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, supplier: e.target.value }))}
           style={{ marginBottom: 8 }}
         />
-        <div style={{ marginBottom: 4, fontWeight: 500 }}>Expiry date</div>
+        <div style={{ marginBottom: 4, fontWeight: 500 }}>
+          Expiry date <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+        </div>
         <Input
           type="date"
           value={form.expiryDate ? form.expiryDate.slice(0, 10) : ""}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, expiryDate: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const val = e.target.value;
+            setForm(f => ({ ...f, expiryDate: val ? val : null }));
+          }}
+          style={{ marginBottom: 8 }}
+        />
+        <Input
+          placeholder="Description (optional)"
+          value={form.description || ''}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, description: e.target.value }))}
           style={{ marginBottom: 8 }}
         />
       </Modal>
