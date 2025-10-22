@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem, searchInventory, type InventoryItem, type CreateInventoryDto, type UpdateInventoryDto } from "../inventoryApi";
 import { Button, Modal, Input, message, Popconfirm, Select, Card as AntdCard, Row, Col, Tag } from "antd";
+import { CaretUpFilled, CaretDownFilled } from '@ant-design/icons';
 
 const emptyForm: CreateInventoryDto = { name: "", quantity: 0, category: "", supplier: "", expiryDate: undefined, description: "" };
 
@@ -228,7 +229,35 @@ const AdminInventoryPage: React.FC = () => {
               ]}
             >
               <div style={{ flex: 1 }}>
-                <p><b>Quantity:</b> {item.quantity} {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600 }}>(Critical)</span>}{item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600 }}>(Low)</span>}</p>
+                <p style={{ display: 'flex', alignItems: 'center' }}>
+                  <b>Quantity:</b>
+                  <Button
+                    size="small"
+                    icon={<CaretDownFilled style={{ color: '#fa541c', fontSize: 16 }} />}
+                    style={{ marginLeft: 8, background: '#fff7e6', border: 'none' }}
+                    disabled={item.quantity <= 0}
+                    onClick={async () => {
+                      if (item.quantity > 0) {
+                        await updateInventoryItem(item.id, { ...item, quantity: item.quantity - 1 });
+                        load();
+                      }
+                    }}
+                  />
+                  <span style={{ minWidth: 32, textAlign: 'center', display: 'inline-block', fontWeight: 600 }}>
+                    {item.quantity}
+                  </span>
+                  <Button
+                    size="small"
+                    icon={<CaretUpFilled style={{ color: '#1890ff', fontSize: 16 }} />}
+                    style={{ marginLeft: 0, background: '#f0f5ff', border: 'none' }}
+                    onClick={async () => {
+                      await updateInventoryItem(item.id, { ...item, quantity: item.quantity + 1 });
+                      load();
+                    }}
+                  />
+                  {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600, marginLeft: 8 }}>(Critical)</span>}
+                  {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600, marginLeft: 8 }}>(Low)</span>}
+                </p>
                 <p><b>Supplier:</b> {item.supplier}</p>
                 {item.expiryDate && (
                   <p><b>Expiry Date:</b> {new Date(item.expiryDate).toLocaleDateString()}</p>
