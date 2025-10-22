@@ -13,6 +13,10 @@ const categoryColors: Record<string, string> = {
   Other: "default",
 };
 
+// Low stock thresholds
+const LOW_STOCK_THRESHOLD = 5;
+const CRITICAL_STOCK_THRESHOLD = 3;
+
 const AdminInventoryPage: React.FC = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -98,11 +102,53 @@ const AdminInventoryPage: React.FC = () => {
   const categories = Array.from(new Set(items.map(i => i.category || "Other")));
   const filteredItems = categoryFilter ? items.filter(i => i.category === categoryFilter) : items;
 
+  // Low stock items for banners
+  const criticalStockItems = items.filter(i => i.quantity > 0 && i.quantity < CRITICAL_STOCK_THRESHOLD);
+  const lowStockItems = items.filter(i => i.quantity >= CRITICAL_STOCK_THRESHOLD && i.quantity <= LOW_STOCK_THRESHOLD);
+
   return (
     <div>
       <h1 style={{ fontSize: 25, fontWeight: 700, padding: '0 0 32px 0', textAlign: 'left' }}>
         Inventory Management
       </h1>
+      {/* Critical stock banner */}
+      {criticalStockItems.length > 0 && (
+        <div style={{
+          background: '#fff1f0',
+          border: '1px solid #ff4d4f',
+          color: '#a8071a',
+          padding: 16,
+          borderRadius: 8,
+          marginBottom: 16,
+          fontWeight: 500
+        }}>
+          🚨 Critical stock alert: {criticalStockItems.length} item{criticalStockItems.length > 1 ? 's are' : ' is'} critically low in stock.
+          {criticalStockItems.length <= 5 && (
+            <span style={{ marginLeft: 8 }}>
+              {criticalStockItems.map(i => i.name).join(', ')}
+            </span>
+          )}
+        </div>
+      )}
+      {/* Low stock banner */}
+      {lowStockItems.length > 0 && (
+        <div style={{
+          background: '#fffbe6',
+          border: '1px solid #ffe58f',
+          color: '#ad6800',
+          padding: 16,
+          borderRadius: 8,
+          marginBottom: 16,
+          fontWeight: 500
+        }}>
+          ⚠️ Low stock alert: {lowStockItems.length} item{lowStockItems.length > 1 ? 's are' : ' is'} low in stock.
+          {lowStockItems.length <= 5 && (
+            <span style={{ marginLeft: 8 }}>
+              {lowStockItems.map(i => i.name).join(', ')}
+            </span>
+          )}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
         <Button type="primary" onClick={openCreate}>Add Item</Button>
         <Select
@@ -118,7 +164,10 @@ const AdminInventoryPage: React.FC = () => {
         {filteredItems.map(item => (
           <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
             <AntdCard
-              title={<span>{item.name} <Tag color={categoryColors[item.category] || "default"}>{item.category || "Other"}</Tag></span>}
+              title={<span>{item.name} <Tag color={categoryColors[item.category] || "default"}>{item.category || "Other"}</Tag>{' '}
+                {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <Tag color="red">Critical</Tag>}
+                {item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <Tag color="orange">Low Stock</Tag>}
+              </span>}
               actions={[
                 <Button onClick={() => openEdit(item)} key="edit">Edit</Button>,
                 <Popconfirm title="Delete?" onConfirm={() => handleDelete(item.id)} key="delete">
@@ -126,7 +175,7 @@ const AdminInventoryPage: React.FC = () => {
                 </Popconfirm>
               ]}
             >
-              <p><b>Quantity:</b> {item.quantity}</p>
+              <p><b>Quantity:</b> {item.quantity} {item.quantity > 0 && item.quantity < CRITICAL_STOCK_THRESHOLD && <span style={{ color: 'red', fontWeight: 600 }}>(Critical)</span>}{item.quantity >= CRITICAL_STOCK_THRESHOLD && item.quantity <= LOW_STOCK_THRESHOLD && <span style={{ color: 'orange', fontWeight: 600 }}>(Low)</span>}</p>
               <p><b>Supplier:</b> {item.supplier}</p>
               <p><b>Expiry Date:</b> {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : "-"}</p>
             </AntdCard>
