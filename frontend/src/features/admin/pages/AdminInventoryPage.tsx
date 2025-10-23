@@ -257,8 +257,8 @@ const AdminInventoryPage: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', // Responsive: min 260px per card
-              gap: '12px 0px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', // Use auto-fill for fixed gaps even with few items
+              gap: '12px 4px', // 12px vertical, 8px horizontal gap
               width: '100%',
               justifyItems: 'start',
               justifyContent: 'start',
