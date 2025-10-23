@@ -11,6 +11,7 @@ export type InventoryItem = {
   supplier: string;
   expiryDate?: string | null;
   description?: string | null;
+  photoUrl?: string | null;
 };
 
 export type CreateInventoryDto = {
@@ -20,6 +21,7 @@ export type CreateInventoryDto = {
   supplier: string;
   expiryDate?: string | null;
   description?: string | null;
+  photoUrl?: string | null;
 };
 
 export type UpdateInventoryDto = {
@@ -29,6 +31,7 @@ export type UpdateInventoryDto = {
   supplier: string;
   expiryDate?: string | null;
   description?: string | null;
+  photoUrl?: string | null;
 };
 
 export async function fetchInventory(): Promise<{ ok: true; data: InventoryItem[] } | { ok: false; detail?: string }> {

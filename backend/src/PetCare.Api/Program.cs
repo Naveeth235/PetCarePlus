@@ -206,6 +206,7 @@ if (app.Environment.IsProduction())
     app.UseStaticFiles();
 }
 
+// Serve static files (for uploaded images)
 app.UseStaticFiles();
 
 app.UseCors("ui");

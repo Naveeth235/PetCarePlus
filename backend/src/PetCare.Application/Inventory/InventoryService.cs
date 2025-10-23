@@ -26,7 +26,8 @@ namespace PetCare.Application.Inventory
                 Category = i.Category,
                 Supplier = i.Supplier,
                 ExpiryDate = i.ExpiryDate,
-                Description = i.Description
+                Description = i.Description,
+                PhotoUrl = i.PhotoUrl // <-- Ensure PhotoUrl is mapped
             });
         }
 
@@ -42,7 +43,8 @@ namespace PetCare.Application.Inventory
                 Category = item.Category,
                 Supplier = item.Supplier,
                 ExpiryDate = item.ExpiryDate,
-                Description = item.Description
+                Description = item.Description,
+                PhotoUrl = item.PhotoUrl // <-- Ensure PhotoUrl is mapped
             };
         }
 
@@ -62,7 +64,8 @@ namespace PetCare.Application.Inventory
                 Category = dto.Category,
                 Supplier = dto.Supplier,
                 ExpiryDate = dto.ExpiryDate,
-                Description = dto.Description
+                Description = dto.Description,
+                PhotoUrl = dto.PhotoUrl // <-- Ensure PhotoUrl is set
             };
             var created = await _repository.AddAsync(item);
             return new InventoryItemDto
@@ -73,7 +76,8 @@ namespace PetCare.Application.Inventory
                 Category = created.Category,
                 Supplier = created.Supplier,
                 ExpiryDate = created.ExpiryDate,
-                Description = created.Description
+                Description = created.Description,
+                PhotoUrl = created.PhotoUrl // <-- Ensure PhotoUrl is mapped
             };
         }
 
@@ -94,6 +98,7 @@ namespace PetCare.Application.Inventory
             item.Supplier = dto.Supplier;
             item.ExpiryDate = dto.ExpiryDate;
             item.Description = dto.Description;
+            item.PhotoUrl = dto.PhotoUrl; // <-- Ensure PhotoUrl is updated
             await _repository.UpdateAsync(item);
             return true;
         }

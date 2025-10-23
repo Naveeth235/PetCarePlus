@@ -83,5 +83,29 @@ namespace PetCare.Api.Controllers
             if (!success) return NotFound();
             return NoContent();
         }
+
+        [HttpPost("upload-photo")]
+        public async Task<IActionResult> UploadPhoto([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded");
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "inventory");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            // Use a unique filename with the original extension
+            var fileName = Guid.NewGuid().ToString("N") + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            // Return the full absolute URL for the image
+            var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+            var url = $"{baseUrl}/images/inventory/{fileName}";
+            return Ok(new { url });
+        }
     }
 }

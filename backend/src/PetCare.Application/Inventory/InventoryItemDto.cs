@@ -12,5 +12,6 @@ namespace PetCare.Application.Inventory
 
         public DateTime? ExpiryDate { get; set; }
         public string? Description { get; set; }
+        public string? PhotoUrl { get; set; } // Optional photo file URL
     }
 }
