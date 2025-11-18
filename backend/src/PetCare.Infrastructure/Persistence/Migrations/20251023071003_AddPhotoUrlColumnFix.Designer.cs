@@ -12,8 +12,8 @@ using PetCare.Infrastructure.Persistence;
 namespace PetCare.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PetCareDbContext))]
-    [Migration("20251023032226_AddPhotoUrlToInventoryItem")]
-    partial class AddPhotoUrlToInventoryItem
+    [Migration("20251023071003_AddPhotoUrlColumnFix")]
+    partial class AddPhotoUrlColumnFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
